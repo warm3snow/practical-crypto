@@ -10,20 +10,29 @@ package main
 
 import (
 	"crypto/tls"
+	"flag"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+var (
+	tlsVersion = flag.String("tlsVersion", "1.2", "specified tls version")
+	addr       = flag.String("addr", "https://localhost:8443", "addr")
+	skipVerify = flag.Bool("skipVerify", true, "skipVerify")
+)
+
 func main() {
-	Dial("1.2", "https://localhost:8443")
+	flag.Parse()
+
+	Dial(*tlsVersion, *addr, *skipVerify)
 }
 
-func Dial(tlsVersion string, addr string) {
+func Dial(tlsVersion string, addr string, skipVerify bool) {
 	versionTLS := GetTLSVersion(tlsVersion)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
+			InsecureSkipVerify: skipVerify,
 			MinVersion:         versionTLS,
 			MaxVersion:         versionTLS,
 		},

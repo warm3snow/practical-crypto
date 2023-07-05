@@ -3,3 +3,5 @@
 *.log
 *.log*
 bin
+build
+./tools/tlsClient
