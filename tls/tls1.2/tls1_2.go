@@ -28,6 +28,7 @@ func main() {
 	// 设置tls配置项
 	tlsCfg := &tls.Config{
 		Certificates: []tls.Certificate{keyPair},
+		MaxVersion:   tls.VersionTLS12,
 	}
 
 	// 设置&启动tls服务
