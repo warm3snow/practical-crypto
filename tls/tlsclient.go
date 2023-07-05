@@ -30,14 +30,17 @@ func main() {
 
 func Dial(tlsVersion string, addr string, skipVerify bool) {
 	versionTLS := GetTLSVersion(tlsVersion)
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: skipVerify,
-			MinVersion:         versionTLS,
-			MaxVersion:         versionTLS,
-		},
+	client := http.DefaultClient
+	if versionTLS != 0 {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: skipVerify,
+				MinVersion:         versionTLS,
+				MaxVersion:         versionTLS,
+			},
+		}
+		client = &http.Client{Transport: tr}
 	}
-	client := &http.Client{Transport: tr}
 	resp, err := client.Get(addr)
 	if err != nil {
 		log.Fatalln(err)
@@ -63,5 +66,5 @@ func GetTLSVersion(tlsVersion string) uint16 {
 	case "1.3":
 		return tls.VersionTLS13
 	}
-	return tls.VersionTLS12
+	return 0
 }

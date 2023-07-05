@@ -15,6 +15,7 @@ import (
 )
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Received connection: %s", r.RemoteAddr)
 	w.Write([]byte("Hello, world!"))
 }
 
