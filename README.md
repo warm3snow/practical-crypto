@@ -5,6 +5,7 @@ The **practical-crypto** project supplies plenty of crypto demos or tools in man
 - Post-quantum computer
 - Federated Learning
 - Chinese SMx
+- OPENSSL
 - etc.
 
 *Note: this project is still in progress*
