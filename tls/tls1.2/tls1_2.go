@@ -21,7 +21,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// 加载服务端证书和私钥
-	keyPair, err := tls.LoadX509KeyPair("../../testdata/server.crt", "../../testdata/server.key")
+	keyPair, err := tls.LoadX509KeyPair("../../openssl/tlscerts/server.crt", "../../openssl/tlscerts/server.key")
 	if err != nil {
 		log.Fatalf("LoadX509KeyPair: %v", err)
 	}

@@ -1,10 +1,10 @@
 #!/bin/sh
 
-caCrt=./testcerts/ca_cert.pem
-caKey=./testcerts/ca_key.pem
-crt=./testcerts/cert.pem
-key=./testcerts/key.pem
-csr=./testcerts/csr.pem
+caCrt=./rsacerts/ca.crt
+caKey=./rsacerts/ca.key
+crt=./rsacerts/server.crt
+key=./rsacerts/server.key
+csr=./rsacerts/server.csr
 
 # self-signed ca certificate
 openssl req -x509 -newkey rsa:4096 -keyout ${caKey} -out ${caCrt} -days 365 -nodes \

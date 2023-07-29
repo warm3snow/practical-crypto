@@ -1,12 +1,12 @@
 #!/bin/sh
 
 
-caCrt=./testcerts/ca_cert.pem
-caKey=./testcerts/ca_key.pem
-crt=./testcerts/cert.pem
-key=./testcerts/key.pem
-csr=./testcerts/csr.pem
-newCrt=./testcerts/new_cert.pem
+caCrt=./rsacerts/ca.crt
+caKey=./rsacerts/ca.key
+crt=./rsacerts/server.crt
+key=./rsacerts/server.key
+csr=./rsacerts/server.csr
+newCrt=./rsacerts/new_server.crt
 
 # renew csr
 openssl x509 -x509toreq -sha256 -in ${crt} -signkey ${key} \

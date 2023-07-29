@@ -1,12 +1,11 @@
 #!/bin/sh
 
-
 #openssl genrsa -out ca.key 4096
 #openssl req -new -x509 -days 3650 -config openssl.cnf  -key ca.key -out ca.crt
 #openssl x509 -text -noout -in ca.crt | grep -A10 "X509v3 extensions"
 #
-#openssl genrsa -out server.key.pem 4096
-#openssl req -config server.openssl.cnf -new -key server.key.pem -out server.csr
+#openssl genrsa -out server.server.key 4096
+#openssl req -config server.openssl.cnf -new -key server.server.key -out server.csr
 ##openssl req -text -in server.csr | grep -A 6 "Requested Extensions:"
 ##openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
 #openssl x509 -req -in server.csr  -CA ca.crt -CAkey ca.key -out server.crt  -CAcreateserial -CAserial serial -days 365 -sha512 -extfile custom_server.openssl.cnf

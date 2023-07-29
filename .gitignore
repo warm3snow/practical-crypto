@@ -4,5 +4,5 @@
 *.log*
 bin
 build
-./tools/tlsClient
-./tls/tlsclient
+tools/tlsClient
+tls/tlsclient
