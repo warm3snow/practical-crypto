@@ -8,11 +8,13 @@
 
 SUBJ="/C=CN/ST=BeiJing/L=BeiJing/O=warm3snow/OU=Server/CN=localhost"
 
-# generate sm2 key => key (openssl 1.1.x以上版本支持sm2, 或者tassl、gmssl)
-gmssl ecparam -genkey -name SM2 -text -out ./gmcerts/server.key
+# generate sm2 key => key
+gmssl ecparam -genkey -name prime256v1 -text -out ./eccerts/server.key
 
 # generate certificate signing request => csr
-gmssl req -new -key ./gmcerts/server.key -out ./gmcerts/server.csr -subj $SUBJ
+gmssl req -new -key ./eccerts/server.key -out ./eccerts/server.csr -subj $SUBJ
 
 # issue certificate => crt
-gmssl x509 -req -days 3650 -sm3 -in ./gmcerts/server.csr -signkey ./gmcerts/server.key -out ./gmcerts/server.crt
+gmssl x509 -req -days 3650 -sha256 -in ./eccerts/server.csr -signkey ./eccerts/server.key -out ./eccerts/server.crt
+
+
