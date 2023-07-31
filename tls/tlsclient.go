@@ -9,11 +9,15 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"flag"
+	"github.com/warm3snow/gmsm/gmtls"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"time"
 )
 
 var (
@@ -32,14 +36,43 @@ func Dial(tlsVersion string, addr string, skipVerify bool) {
 	versionTLS := GetTLSVersion(tlsVersion)
 	client := http.DefaultClient
 	if versionTLS != 0 {
-		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{
+		if versionTLS != gmtls.VersionGMSSL {
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: skipVerify,
+					MinVersion:         versionTLS,
+					MaxVersion:         versionTLS,
+				},
+			}
+			client = &http.Client{Transport: tr}
+		} else {
+			config := &gmtls.Config{
 				InsecureSkipVerify: skipVerify,
-				MinVersion:         versionTLS,
-				MaxVersion:         versionTLS,
-			},
+				GMSupport:          gmtls.NewGMSupport(),
+			}
+			client = &http.Client{
+				Transport: &http.Transport{
+					DialTLSContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+						dialer := &net.Dialer{}
+						conn, err := gmtls.DialWithDialer(dialer, network, addr, config)
+						if err != nil {
+							return nil, err
+						}
+
+						return conn, nil
+					},
+					Dial: (&net.Dialer{
+						Timeout:   30 * time.Second,
+						KeepAlive: 30 * time.Second,
+					}).Dial,
+					ForceAttemptHTTP2:     true,
+					MaxIdleConns:          100,
+					TLSHandshakeTimeout:   10 * time.Second,
+					IdleConnTimeout:       90 * time.Second,
+					ExpectContinueTimeout: 1 * time.Second,
+				},
+			}
 		}
-		client = &http.Client{Transport: tr}
 	}
 	resp, err := client.Get(addr)
 	if err != nil {
@@ -65,6 +98,8 @@ func GetTLSVersion(tlsVersion string) uint16 {
 		return tls.VersionTLS12
 	case "1.3":
 		return tls.VersionTLS13
+	case "gmtls1.1":
+		return gmtls.VersionGMSSL
 	}
 	return 0
 }

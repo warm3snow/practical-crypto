@@ -14,9 +14,9 @@ openssl genrsa -out ./rsacerts/server.key 2048
 openssl req -new -key ./rsacerts/server.key -out ./rsacerts/server.csr -subj $SUBJ
 
 # issue certificate => crt
-openssl x509 -req -sha256 -days 365 -in ./rsacerts/server.csr -signkey ./rsacerts/server.key -out ./rsacerts/server.crt
-
+openssl x509 -req -sha256 -days 365 -in ./rsacerts/server.csr -signkey ./rsacerts/server.key -out ./rsacerts/server.crt \
+-extfile ./openssl.cnf -extensions v3_req
 
 # 方式2
 #openssl req -x509 -newkey rsa:2048 -keyout ./rsacerts/server.key -out ./rsacerts/server.crt -days 3650  -nodes \
-#        -subj $SUBJ
+#        -subj $SUBJ -extfile ./openssl.cnf -extensions v3_req

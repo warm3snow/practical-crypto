@@ -1,0 +1,14 @@
+[req]
+req_extensions = v3_req
+
+[v3_req]
+# 添加你需要的扩展
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = example.com
+DNS.2 = www.example.com
+IP.1 = 192.168.1.100
