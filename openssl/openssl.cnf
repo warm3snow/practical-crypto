@@ -1,10 +1,17 @@
 [req]
 req_extensions = v3_req
 
-[v3_req]
+[v3_req_sign]
 # 添加你需要的扩展
 basicConstraints = CA:FALSE
-keyUsage = digitalSignature, keyEncipherment
+keyUsage = digitalSignature
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+[v3_req_enc]
+# 添加你需要的扩展
+basicConstraints = CA:FALSE
+keyUsage = keyEncipherment
 extendedKeyUsage = serverAuth, clientAuth
 subjectAltName = @alt_names
 

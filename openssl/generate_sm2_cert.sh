@@ -12,14 +12,14 @@ SUBJ="/C=CN/ST=BeiJing/L=BeiJing/O=warm3snow/OU=Server/CN=localhost"
 gmssl ecparam -genkey -name SM2 -text -out ./gmcerts/server_sign.key
 gmssl req -new -key ./gmcerts/server_sign.key -out ./gmcerts/server.csr -subj $SUBJ
 gmssl x509 -req -days 3650 -sm3 -in ./gmcerts/server.csr  -signkey ./gmcerts/server_sign.key -out ./gmcerts/server_sign.crt \
--extfile ./openssl.cnf -extensions v3_req
+-extfile ./openssl.cnf -extensions v3_req_sign
 
 
 # 加密证书
 gmssl ecparam -genkey -name SM2 -text -out ./gmcerts/server_enc.key
 gmssl req -new -key ./gmcerts/server_enc.key -out ./gmcerts/server.csr -subj $SUBJ
 gmssl x509 -req -days 3650 -sm3 -in ./gmcerts/server.csr  -signkey ./gmcerts/server_enc.key -out ./gmcerts/server_enc.crt \
--extfile ./openssl.cnf -extensions v3_req
+-extfile ./openssl.cnf -extensions v3_req_enc
 
 # clean
 rm -rf ./gmcerts/server.csr
