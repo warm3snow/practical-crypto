@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	tlsVersion = flag.String("tlsVersion", "1.2", "specified tls version")
+	tlsVersion = flag.String("tlsVersion", "negotiated, not sure", "specified tls version")
 	addr       = flag.String("addr", "https://localhost:8443", "addr")
 	skipVerify = flag.Bool("skipVerify", true, "skipVerify")
 )
