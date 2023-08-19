@@ -41,10 +41,14 @@ func generateTOTP(secret string, counter int64) (string, error) {
 func main() {
 	// 设置共享密钥（这里使用Base32编码）
 	secret := "ABCDEFGH234567MN"
+	fmt.Printf("共享密钥：%s\n", secret)
 
 	// 获取当前时间步长C
 	currentTime := time.Now().Unix()
 	timeStep := currentTime / 30
+
+	fmt.Println("Current unix time:", currentTime)
+	fmt.Printf("Current time counter: %d\n", timeStep)
 
 	// 生成TOTP
 	otp, err := generateTOTP(secret, timeStep)
