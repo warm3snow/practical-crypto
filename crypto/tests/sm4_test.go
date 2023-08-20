@@ -6,7 +6,7 @@
  * @Date: 2023/8/16 17:03
  */
 
-package crypto
+package tests
 
 import (
 	"fmt"

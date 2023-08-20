@@ -6,7 +6,7 @@
  * @Date: 2023/8/12 17:48
  */
 
-package crypto
+package tests
 
 import (
 	"crypto"
