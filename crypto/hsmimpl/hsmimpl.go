@@ -19,6 +19,11 @@ type hsmimpl struct {
 	sessions     chan base.SessionHandle
 }
 
+func (h *hsmimpl) GenSymKey(algo string, keySize int) ([]byte, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (h *hsmimpl) Enc(algo string, key, plain []byte, mode string) ([]byte, error) {
 	//TODO implement me
 	panic("implement me")
