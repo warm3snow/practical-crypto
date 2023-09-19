@@ -3,7 +3,6 @@ package crypto
 import (
 	"github.com/warm3snow/practical-crypto/crypto/hsmimpl"
 	"github.com/warm3snow/practical-crypto/crypto/softimpl"
-	"github.com/warm3snow/practical-crypto/crypto/types"
 )
 
 // CSP - crypto service provider
@@ -28,9 +27,9 @@ type CSP interface {
 }
 
 // InitCrypto returns a new crypto instance. support soft and hsm
-func InitCrypto(cfg *types.CryptoConfig) (CSP, error) {
-	if !cfg.Soft {
-		return hsmimpl.New(cfg.LibPath)
+func InitCrypto(soft bool, libPath string) (CSP, error) {
+	if !soft {
+		return hsmimpl.New(libPath)
 	}
 	return softimpl.New()
 }
