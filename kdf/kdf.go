@@ -12,4 +12,5 @@ type KDF interface {
 	DeriveKeyByPassword(password string) (deriveKey []byte, err error)
 	VerifyDeriveKeyStr(kdfKeyStr string, password []byte) (isOk bool, err error)
 	GetDeriveKeyStr() string
+	KDFName() string
 }

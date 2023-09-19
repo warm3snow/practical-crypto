@@ -1,6 +1,6 @@
 /**
  * @Author: xueyanghan
- * @File: argon2impl_test.go
+ * @File: scryptimpl_test.go
  * @Version: 1.0.0
  * @Description: desc.
  * @Date: 2023/9/19 15:26
@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	kdfimpl *Argon2Impl
+	kdfimpl *ScryptImpl
 )
 
 func TestMain(m *testing.M) {
@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestArgon2Impl(t *testing.T) {
+func TestBcryptImpl(t *testing.T) {
 	_, err := kdfimpl.DeriveKeyByPassword("123456")
 	assert.NoError(t, err)
 

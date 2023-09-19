@@ -1,6 +1,6 @@
 /**
  * @Author: xueyanghan
- * @File: argon2impl_test.go
+ * @File: pbkdf2impl_test.go
  * @Version: 1.0.0
  * @Description: desc.
  * @Date: 2023/9/19 15:26
@@ -14,15 +14,15 @@ import (
 )
 
 var (
-	kdfimpl *Argon2Impl
+	kdfimpl *Pbkdf2Impl
 )
 
 func TestMain(m *testing.M) {
-	kdfimpl = New(-1, -1, -1, -1)
+	kdfimpl = New(-1, -1)
 	m.Run()
 }
 
-func TestArgon2Impl(t *testing.T) {
+func TestBcryptImpl(t *testing.T) {
 	_, err := kdfimpl.DeriveKeyByPassword("123456")
 	assert.NoError(t, err)
 
