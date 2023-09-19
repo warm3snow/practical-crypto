@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 14:18
  */
 
-package pbkdf2impl
+package argon2impl
 
 import (
 	"bytes"

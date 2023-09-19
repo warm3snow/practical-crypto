@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 15:26
  */
 
-package pbkdf2impl
+package scryptimpl
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestBcryptImpl(t *testing.T) {
+func TestScryptImpl(t *testing.T) {
 	_, err := kdfimpl.DeriveKeyByPassword("123456")
 	assert.NoError(t, err)
 

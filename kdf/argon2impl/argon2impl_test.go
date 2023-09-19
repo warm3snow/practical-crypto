@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 15:26
  */
 
-package pbkdf2impl
+package argon2impl
 
 import (
 	"github.com/stretchr/testify/assert"

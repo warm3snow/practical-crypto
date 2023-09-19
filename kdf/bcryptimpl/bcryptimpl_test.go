@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 15:26
  */
 
-package pbkdf2impl
+package bcryptimpl
 
 import (
 	"github.com/stretchr/testify/assert"

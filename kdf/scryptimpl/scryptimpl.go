@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 16:02
  */
 
-package pbkdf2impl
+package scryptimpl
 
 import (
 	"bytes"

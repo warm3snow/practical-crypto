@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestBcryptImpl(t *testing.T) {
+func TestPbkdf2Impl(t *testing.T) {
 	_, err := kdfimpl.DeriveKeyByPassword("123456")
 	assert.NoError(t, err)
 

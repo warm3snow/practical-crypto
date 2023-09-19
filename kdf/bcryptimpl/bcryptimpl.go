@@ -6,7 +6,7 @@
  * @Date: 2023/9/19 15:54
  */
 
-package pbkdf2impl
+package bcryptimpl
 
 import (
 	"github.com/pkg/errors"
