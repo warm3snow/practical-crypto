@@ -6,13 +6,13 @@
  * @Date: 2023/9/17 16:48
  */
 
-package pbkdf
+package pbkdf2impl
 
 import (
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
-	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
@@ -23,17 +23,6 @@ var (
 	password = []byte("123456")
 )
 
-func TestArgon2(t *testing.T) {
-	salt := make([]byte, 16)
-	if _, err := rand.Read(salt); err != nil {
-		panic(err)
-	}
-	key := argon2.Key(password, salt, 3, 32*1024, 4, 32)
-	key2 := argon2.IDKey(password, salt, 4, 32*1024, 4, 32)
-
-	fmt.Printf("key[%d]: %v\n key2[%d]: %v\n", len(key), key, len(key2), key2)
-}
-
 func TestPbkdf2(t *testing.T) {
 	salt := make([]byte, 16)
 	if _, err := rand.Read(salt); err != nil {
@@ -43,18 +32,20 @@ func TestPbkdf2(t *testing.T) {
 	keyLen := 32
 
 	deriveKey := pbkdf2.Key(password, salt, iters, keyLen, sha256.New)
-	fmt.Println(deriveKey)
+	fmt.Printf("deriveKey hex[%d] = %s\n", len(deriveKey), hex.EncodeToString(deriveKey))
 
-	deriveKey2 := pbkdf2.Key(password, salt, iters, keyLen, sha256.New)
-	fmt.Println(deriveKey2)
+	deriveKey = pbkdf2.Key(password, salt, iters, keyLen, sha256.New)
+	fmt.Printf("deriveKey hex[%d] = %s\n", len(deriveKey), hex.EncodeToString(deriveKey))
 }
 
 func TestBcrypt(t *testing.T) {
+	// not key derivation function
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("hashedPassword[%d]: %v\n", len(hashedPassword), hashedPassword)
+	fmt.Printf("hashedPassword str: %s\n", string(hashedPassword))
 
 	err = bcrypt.CompareHashAndPassword(hashedPassword, password)
 	if err != nil {
@@ -78,5 +69,11 @@ func TestScrypt(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(deriveKey)
+	fmt.Printf("deriveKey hex[%d] = %s\n", len(deriveKey), hex.EncodeToString(deriveKey))
+
+	deriveKey, err = scrypt.Key(password, salt, N, r, p, keyLen)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("deriveKey hex[%d] = %s\n", len(deriveKey), hex.EncodeToString(deriveKey))
 }
