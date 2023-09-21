@@ -9,14 +9,14 @@
 package kdf
 
 import (
-	"crypto/rand"
 	"github.com/pkg/errors"
 	"github.com/warm3snow/practical-crypto/kdf/argon2impl"
 	"github.com/warm3snow/practical-crypto/kdf/bcryptimpl"
 	"github.com/warm3snow/practical-crypto/kdf/pbkdf2impl"
 	"github.com/warm3snow/practical-crypto/kdf/scryptimpl"
-	"math/big"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 const (
@@ -58,18 +58,38 @@ func InitKdf(kdfName string, keyLen int) (KDF, error) {
 }
 
 // GenerateRandomPassword generate random password
-func GenerateRandomPassword(length int) (string, error) {
+func GenerateRandomPassword(length int, minClasses int) (string, error) {
 	// 定义密码字符集
-	characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
-		"0123456789!@#$%^&*()_+[]{}|;:,.<>?`~"
+	digits := "0123456789"
+	upperLetters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	lowerLetters := "abcdefghijklmnopqrstuvwxyz"
+	specialChars := "!@#$%^&*()_+[]{}|;:,.<>?`~"
 
-	password := make([]byte, length)
-	for i := range password {
-		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(characters))))
-		if err != nil {
-			return "", err
+	charSets := []string{digits, upperLetters, lowerLetters, specialChars}
+	selectedSets := make([]byte, 0, minClasses)
+
+	// 设置随机数种子
+	rand.Seed(time.Now().UnixNano())
+
+	// 从每个字符集中随机选择一个字符
+	charSetsUsedFlag := make(map[int]bool)
+	for i := 0; i < minClasses; i++ {
+		charSetsIndex := rand.Intn(len(charSets))
+		if charSetsUsedFlag[charSetsIndex] {
+			i--
+			continue
+		} else {
+			charSetsUsedFlag[charSetsIndex] = true
 		}
-		password[i] = characters[index.Int64()]
+		charSet := charSets[charSetsIndex]
+		selectedSets = append(selectedSets, charSet[rand.Intn(len(charSet))])
 	}
-	return string(password), nil
+
+	// 剩余字符随机选择
+	for i := 0; i < length-minClasses; i++ {
+		charSet := charSets[rand.Intn(len(charSets))]
+		selectedSets = append(selectedSets, charSet[rand.Intn(len(charSet))])
+	}
+
+	return string(selectedSets), nil
 }

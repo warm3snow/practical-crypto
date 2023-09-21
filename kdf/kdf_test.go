@@ -9,6 +9,7 @@
 package kdf
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -46,8 +47,9 @@ func TestKDF(t *testing.T) {
 			err:     errors.Errorf("kdfName %s not supported", "fakeKDF"),
 		},
 	}
-	password, err := GenerateRandomPassword(16)
+	password, err := GenerateRandomPassword(8, 3)
 	assert.NoError(t, err)
+	fmt.Printf("明文密码: %s\n", password)
 
 	for _, testCase := range testCases {
 		kdf, err := InitKdf(testCase.kdfName, testCase.keyLen)
@@ -63,9 +65,11 @@ func TestKDF(t *testing.T) {
 
 		kdfKeyStr := kdf.GetDeriveKeyStr()
 		assert.NotEmpty(t, kdfKeyStr)
+		fmt.Printf("密文密码: %s\n", kdfKeyStr)
 
 		isOk, err := kdf.VerifyDeriveKeyStr(kdfKeyStr, []byte(password))
 		assert.NoError(t, err)
 		assert.True(t, isOk)
+		fmt.Printf("验证密文密码: %v\n", isOk)
 	}
 }
