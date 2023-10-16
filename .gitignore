@@ -6,3 +6,4 @@ bin
 build
 tools/tlsClient
 tls/tlsclient
+tools/kunpeng_certmanager/itrustee_sdk
