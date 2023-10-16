@@ -1,0 +1,6 @@
+[ v3_ca ]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+subjectAltName=DNS:localhost,DNS:*.localhost
+basicConstraints = critical,CA:true
+keyUsage = cRLSign,keyCertSign
