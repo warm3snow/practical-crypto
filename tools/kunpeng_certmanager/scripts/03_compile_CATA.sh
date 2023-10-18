@@ -3,7 +3,8 @@
 #set -x
 
 # 在itrustee_sdk目录下执行
-ITRUSTEE_SDK_PATH="`pwd`"
+WKDIR_PATH="`pwd`"
+ITRUSTEE_SDK_PATH="$WKDIR_PATH/itrustee_sdk"
 
 # compile cert manager CA tool
 cd $ITRUSTEE_SDK_PATH/test/CA/cert_manager
@@ -34,10 +35,10 @@ cp certmanager /usr/bin
 #  </TA_Control_Info>
 #</ConfigInfo>
 #获取cert manager的TA开发者证书、签发的config二进制后，将cert manager 的TA私钥、config放到ITRUSTEE_SDK_PATH项目根目录
-mkdir -p $ITRUSTEE_SDK_PATH/test/TA/certmanager/cloud/signed_config
-mkdir -p $ITRUSTEE_SDK_PATH/test/TA/certmanager/cloud/TA_cert
-cp $ITRUSTEE_SDK_PATH/config $ITRUSTEE_SDK_PATH/test/TA/certmanager/cloud/signed_config
-cp $ITRUSTEE_SDK_PATH/root.key $ITRUSTEE_SDK_PATH/test/TA/certmanager/cloud/TA_cert/private_key.pem
-cd $ITRUSTEE_SDK_PATH/test/TA/certmanager/cloud
+mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/signed_config
+mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/TA_cert
+cp $WKDIR_PATH/config $ITRUSTEE_SDK_PATH/build/signtools/signed_config
+cp $WKDIR_PATH/root.key $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
+cd $ITRUSTEE_SDK_PATH/test/TA/certmanager/
 make
 cp *.sec /usr/bin

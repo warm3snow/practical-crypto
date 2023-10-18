@@ -1,0 +1,8 @@
+gpd.ta.appID:   		d354a48a-e6b1-4651-b7b5-c79c28f13870
+gpd.ta.service_name:		certmanager
+gpd.ta.singleInstance:		true
+gpd.ta.multiSession: 		true
+gpd.ta.instanceKeepAlive:	false
+gpd.ta.dataSize:		2097152
+gpd.ta.stackSize:		32768
+gpd.ta.sys_verify_ta:   true
