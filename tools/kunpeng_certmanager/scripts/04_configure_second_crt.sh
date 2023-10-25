@@ -17,3 +17,5 @@ openssl x509 -in second.crt -outform der -out second.der
 # 此时安全OS仅允许加载三方TA（由用户二级证书签发的TA证书）以及系统TA（configs.xml注有<sys_verify_ta>标签）加载运行，
 # 原由华为签发的TA证书的TA将会加载失败。
 /usr/bin/certmanager import second.der
+
+rm -rf second.csr root.srl
