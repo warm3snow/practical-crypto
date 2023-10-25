@@ -39,6 +39,8 @@ mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/signed_config
 mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/TA_cert
 cp $WKDIR_PATH/config $ITRUSTEE_SDK_PATH/build/signtools/signed_config
 cp $WKDIR_PATH/root.key $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
+
+cp -f $WKDIR_PATH/manifest.txt $ITRUSTEE_SDK_PATH/test/TA/cert_manager/manifest.txt
 cd $ITRUSTEE_SDK_PATH/test/TA/cert_manager/
 make
 cp *.sec /usr/bin

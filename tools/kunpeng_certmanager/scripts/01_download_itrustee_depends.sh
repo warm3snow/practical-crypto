@@ -1,6 +1,10 @@
 #!/bin/sh
 
 #set -x
+# install dependencies
+#pip3 install --upgrade pip
+#pip3 install pycrypto
+#pip install pycryptodome
 
 ITRUSTEE_SDK_PATH="`pwd`/itrustee_sdk"
 
