@@ -37,10 +37,10 @@ cp certmanager /usr/bin
 #获取cert manager的TA开发者证书、签发的config二进制后，将cert manager 的TA私钥、config放到ITRUSTEE_SDK_PATH项目根目录
 mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/signed_config
 mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/TA_cert
-cp $WKDIR_PATH/config $ITRUSTEE_SDK_PATH/build/signtools/signed_config
-cp $WKDIR_PATH/root.key $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
+cp $WKDIR_PATH/certmanager/config $ITRUSTEE_SDK_PATH/build/signtools/signed_config
+cp $WKDIR_PATH/certmanager/root.key $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
 
-cp -f $WKDIR_PATH/manifest.txt $ITRUSTEE_SDK_PATH/test/TA/cert_manager/manifest.txt
+cp -f $WKDIR_PATH/certmanager/manifest.txt $ITRUSTEE_SDK_PATH/test/TA/cert_manager/manifest.txt
 cd $ITRUSTEE_SDK_PATH/test/TA/cert_manager/
 make
 cp *.sec /usr/bin

@@ -1,5 +1,4 @@
 #!/bin/sh
-
 #set -x
 
 # 在itrustee_sdk目录下执行
@@ -7,7 +6,7 @@ ITRUSTEE_SDK_PATH="`pwd`/itrustee_sdk"
 
 # 1. 生成root证书
 #openssl genrsa -out root.key 4096
-openssl req -new -x509 -key root.key -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
+openssl req -new -x509 -key ./certmanager/root.key -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
 
 #openssl x509 -in root.crt -pubkey -noout -C
 

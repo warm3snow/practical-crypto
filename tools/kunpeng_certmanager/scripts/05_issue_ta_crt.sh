@@ -18,6 +18,9 @@ openssl req -new -key private_key.pem -out cert_req_02.csr -subj "/C=CN/L=F/O=te
 openssl x509 -req -in cert_req_02.csr -CA ./second.crt -CAkey./second/second.key -CAcreateserial -out tacert.crt -sha256 -days 3650
 openssl x509 -in tacert.crt -outform der -out ta_cert.der
 
+# 清理csr，后续不会用到
+rm -f cert_req_01.csr cert_req_02.csr
+
 # 3. 准备TA配置文件configs.xml
 # configs.xml示例：
 #<?xml version="1.0" encoding="utf-8"?>
