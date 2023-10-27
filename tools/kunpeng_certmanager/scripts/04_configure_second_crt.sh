@@ -14,7 +14,7 @@ openssl req -new -key $SECOND_PATH/second.key -out $SECOND_PATH/second.csr -subj
 openssl x509 -req -CA $ROOT_PATH/root.crt -CAkey $ROOT_PATH/private_key.pem -CAcreateserial \
 -in $SECOND_PATH/second.csr -out  $SECOND_PATH/second.crt \
 -sha256 -extfile $SECOND_PATH/openssl.cnf -extensions v3_ca -days 3650
-openssl x509 -in $SECOND_PATH/second.crt -outform $SECOND_PATH/der -out $SECOND_PATH/second.der
+openssl x509 -in $SECOND_PATH/second.crt -outform der -out $SECOND_PATH/second.der
 
 # 导入TA二级证书
 # 注：成功导入后，用户可基于二级证书自行颁发TA证书以及签发config，然后参与TA编译形成业务TA，
