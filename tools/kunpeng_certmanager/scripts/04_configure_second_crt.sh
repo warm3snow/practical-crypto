@@ -11,7 +11,7 @@ SECOND_PATH="`pwd`/second"
 openssl genrsa -out $SECOND_PATH/second.key 4096
 openssl req -new -key $SECOND_PATH/second.key -out $SECOND_PATH/second.csr -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Secondary CA"
 
-openssl x509 -req -CA $ROOT_PATH/root.crt -CAkey $ROOT_PATH/root.key -CAcreateserial \
+openssl x509 -req -CA $ROOT_PATH/root.crt -CAkey $ROOT_PATH/private_key.pem -CAcreateserial \
 -in $SECOND_PATH/second.csr -out  $SECOND_PATH/second.crt \
 -sha256 -extfile $SECOND_PATH/openssl.cnf -extensions v3_ca -days 3650
 openssl x509 -in $SECOND_PATH/second.crt -outform $SECOND_PATH/der -out $SECOND_PATH/second.der
