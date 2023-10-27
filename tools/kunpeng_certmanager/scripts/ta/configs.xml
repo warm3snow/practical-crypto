@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConfigInfo>
+    <TA_Basic_Info>
+        <service_name>third-demo</service_name>
+        <uuid>87709191-1633-4d4e-b39a-951a59d82fb2</uuid>
+    </TA_Basic_Info>
+    <TA_Manifest_Info>
+        <instance_keep_alive>false</instance_keep_alive>
+        <stack_size>40960</stack_size>
+        <heap_size>67928064</heap_size>
+        <multi_command>false</multi_command>
+        <multi_session>false</multi_session>
+        <single_instance>true</single_instance>
+    </TA_Manifest_Info>
+</ConfigInfo>
