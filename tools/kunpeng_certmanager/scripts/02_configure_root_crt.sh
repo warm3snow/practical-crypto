@@ -6,9 +6,9 @@ ITRUSTEE_SDK_PATH="`pwd`/itrustee_sdk"
 ROOT_PATH="`pwd`/root"
 
 # 1. 生成root证书
-#openssl genrsa -out root.key 4096
-#openssl req -new -x509 -key ./certmanager/root.key -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
-#openssl x509 -in root.crt -pubkey -noout -C
+#openssl genrsa -out $ROOT_PATH/private_key.pem 4096
+#openssl req -new -x509 -key $ROOT_PATH/private_key.pem -out $ROOT_PATH/root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
+#openssl x509 -in $ROOT_PATH/root.crt -pubkey -noout -C
 
 # backup cert_config.h
 CertManagerPath="$ITRUSTEE_SDK_PATH/test/TA/cert_manager"
