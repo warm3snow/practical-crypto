@@ -21,3 +21,5 @@ go build -o renew_root_pub_tool ../renew_root_pub_tool/renew_root_pub_tool.go
 ./renew_root_pub_tool \
 -certConfigFilePath $CertManagerPath/include/cert_config.h \
 -rootCrt $ROOT_PATH/root.crt
+
+echo "renew root public key done"

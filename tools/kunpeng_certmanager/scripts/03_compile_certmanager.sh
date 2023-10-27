@@ -39,7 +39,7 @@ cp certmanager /usr/bin
 mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/signed_config
 mkdir -p $ITRUSTEE_SDK_PATH/build/signtools/TA_cert
 cp $ROOT_PATH/config $ITRUSTEE_SDK_PATH/build/signtools/signed_config
-cp $ROOT_PATH/root.key $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
+cp $ROOT_PATH/private_key.pem $ITRUSTEE_SDK_PATH/build/signtools/TA_cert/private_key.pem
 
 cp -f $ROOT_PATH/manifest.txt $ITRUSTEE_SDK_PATH/test/TA/cert_manager/manifest.txt
 cd $ITRUSTEE_SDK_PATH/test/TA/cert_manager/

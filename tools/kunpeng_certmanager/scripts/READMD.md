@@ -40,20 +40,20 @@ gpd.ta.sys_verify_ta:   true
 - csr文件
 ```sh
 # 生成certmanager TA私钥
-$ openssl genrsa -out root.key 4096
+$ openssl genrsa -out private_key.pem 4096
 
 # 生成certmanager TA证书请求
-$ openssl req -new -key root.key -out cert_req_01.csr -subj "/C=CN/O=Huawei/OU=Huawei iTrustee Production/CN=d354a48a-e6b1-4651-b7b5-c79c28f13870_certmanager"
+$ openssl req -new -key private_key.pem -out cert_req_01.csr -subj "/C=CN/O=Huawei/OU=Huawei iTrustee Production/CN=d354a48a-e6b1-4651-b7b5-c79c28f13870_certmanager"
 
 # 自签证书
-openssl req -new -x509 -key root.key -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
+openssl req -new -x509 -key private_key.pem -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
 ```
-注：root.key，root.crt, manifest.txt 需要妥善保管
+注：private_key.pem，root.crt, manifest.txt 需要妥善保管
 
 ## 二级证书生成
 
 ## Scripts功能介绍
-- 首先需要将root.key/config/manifest.txt配置到scripts/certmanager目录下（该目录如果没有需要手工创建）
+- 首先需要将private_key.pem/config/manifest.txt配置到scripts/certmanager目录下（该目录如果没有需要手工创建）
 - 运行脚本[01_download_itrustee_depends.sh](01_download_itrustee_depends.sh)下载itrustee依赖库
 - 运行脚本[02_configure_root_crt.sh](02_configure_root_crt.sh) 生成root证书，并提取root公钥，配置到certmanager TA程序中（硬编码）
 - 运行脚本[03_compile_certmanager.sh](03_compile_certmanager.sh)生成certmanager CA/TA程序
