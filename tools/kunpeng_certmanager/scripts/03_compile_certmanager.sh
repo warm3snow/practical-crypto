@@ -7,7 +7,15 @@ WKDIR_PATH="`pwd`"
 ITRUSTEE_SDK_PATH="$WKDIR_PATH/itrustee_sdk"
 ROOT_PATH="$WKDIR_PATH/root"
 
+echo "手动修改CA，指定TA应用sec路径"
+exit 1
 # compile cert manager CA tool
+# 注：这里需要手动修改CA下的itrustee_sdk/test/CA/cert_manager/cert_manager.c (TODO 注：目前需要手动修改，后续会在renew_root_pub_tool中支持自动化修改）
+# 修改点1, line26:  #define TA_PATH "/usr/bin/4acaf7c8-c652-4643-9b7a-cc07e7a3187a.sec"
+# 修改点2, line256: static TEEC_UUID g_taId = {
+      # 0x4acaf7c8, 0xc652, 0x4643,
+      # { 0x9b, 0x7a, 0xcc, 0x07, 0xe7, 0xa3, 0x18, 0x7a }
+
 cd $ITRUSTEE_SDK_PATH/test/CA/cert_manager
 make
 cp certmanager /usr/bin
