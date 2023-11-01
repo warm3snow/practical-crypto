@@ -7,18 +7,26 @@ WKDIR_PATH="`pwd`"
 ITRUSTEE_SDK_PATH="$WKDIR_PATH/itrustee_sdk"
 ROOT_PATH="$WKDIR_PATH/root"
 
-echo "手动修改CA，指定TA应用sec路径"
-exit 1
+# compile certmanager_tool
+go build -o certmanager_tool ../certmanager_tool/main.go
+
 # compile cert manager CA tool
-# 注：这里需要手动修改CA下的itrustee_sdk/test/CA/cert_manager/cert_manager.c (TODO 注：目前需要手动修改，后续会在renew_root_pub_tool中支持自动化修改）
+# 注：这里需要手动修改CA下的itrustee_sdk/test/CA/cert_manager/cert_manager.c
 # 修改点1, line26:  #define TA_PATH "/usr/bin/4acaf7c8-c652-4643-9b7a-cc07e7a3187a.sec"
 # 修改点2, line256: static TEEC_UUID g_taId = {
       # 0x4acaf7c8, 0xc652, 0x4643,
       # { 0x9b, 0x7a, 0xcc, 0x07, 0xe7, 0xa3, 0x18, 0x7a }
+./certmanager_tool renewCaPath \
+--caCertManagerFilePath $ITRUSTEE_SDK_PATH/test/CA/cert_manager/cert_manager.c \
+--taSecPath /usr/bin/f68fd704-6eb1-4d14-b218-722850eb3ef0.sec
+
+echo "update cert_manager CA done!"
 
 cd $ITRUSTEE_SDK_PATH/test/CA/cert_manager
 make
 cp certmanager /usr/bin
+
+echo "compile cert_manager CA done!"
 
 # compile cert manager TA tool (注：需先获取华为颁发的TA开发者证书，参考https://support.huawei.com/enterprise/zh/doc/EDOC1100315175/97c8190e)
 # configs.xml示例：（特别注意：sys_verify_ta必须为true，CERT_Permission必须为true）
@@ -53,3 +61,5 @@ cp -f $ROOT_PATH/manifest.txt $ITRUSTEE_SDK_PATH/test/TA/cert_manager/manifest.t
 cd $ITRUSTEE_SDK_PATH/test/TA/cert_manager/
 make
 cp *.sec /usr/bin
+
+echo "compile cert_manager TA done!"

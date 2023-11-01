@@ -1,45 +1,65 @@
-/**
- * @Author: xueyanghan
- * @File: extract_pub.go
- * @Version: 1.0.0
- * @Description: desc.
- * @Date: 2023/10/13 15:25
- */
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 
-package main
+*/
+package cmd
 
 import (
 	"bufio"
 	"bytes"
-	"flag"
 	"github.com/pkg/errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 const (
-	CERT_CONFIG_FILE_PATH     = "cert_config.h"
 	CERT_CONFIG_REPLACE_BEGIN = 24
 	CERT_CONFIG_REPLACE_END   = 60
 )
 
 var (
-	rootCrt            = flag.String("rootCrt", "root.crt", "root crt file")
-	certConfigFilePath = flag.String("certConfigFilePath", CERT_CONFIG_FILE_PATH, "cert config file path")
+	rootCrt            *string
+	certConfigFilePath *string
 )
 
-func main() {
-	flag.Parse()
-	cFormedPubKey, err := extractCFromedPubFromCrt()
-	if err != nil {
-		panic(err)
-	}
-	err = replacePub(cFormedPubKey)
-	if err != nil {
-		panic(err)
-	}
+// renewRootPubCmd represents the renewRootPub command
+var renewRootPubCmd = &cobra.Command{
+	Use:   "renewRootPub",
+	Short: "update cert_config.h root_public_key from root.crt",
+	Long:  "update cert_config.h root_public_key from root.crt",
+	Run: func(cmd *cobra.Command, args []string) {
+		cFormedPubKey, err := extractCFromedPubFromCrt()
+		if err != nil {
+			panic(err)
+		}
+		err = replacePub(cFormedPubKey)
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("update cert_config.h root_public_key success")
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(renewRootPubCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	rootCrt = renewRootPubCmd.PersistentFlags().StringP("rootCrt", "r",
+		"root.crt", "root crt file")
+	certConfigFilePath = renewRootPubCmd.PersistentFlags().StringP("certConfigFilePath", "c",
+		"cert_config.h", "cert config file path")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// renewRootPubCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func extractCFromedPubFromCrt() (string, error) {

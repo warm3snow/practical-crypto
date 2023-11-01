@@ -15,11 +15,11 @@ CertManagerPath="$ITRUSTEE_SDK_PATH/test/TA/cert_manager"
 cp $CertManagerPath/include/cert_config.h $CertManagerPath/include/cert_config.h_.`date +%Y%m%d%H%M%S`
 
 # compile renew_root_pub_tool
-go build -o renew_root_pub_tool ../renew_root_pub_tool/renew_root_pub_tool.go
+go build -o certmanager_tool ../certmanager_tool/main.go
 
 # renew root public key
-./renew_root_pub_tool \
--certConfigFilePath $CertManagerPath/include/cert_config.h \
--rootCrt $ROOT_PATH/root.crt
+./certmanager_tool renewRootPub \
+--certConfigFilePath $CertManagerPath/include/cert_config.h \
+--rootCrt $ROOT_PATH/root.crt
 
 echo "renew root public key done"
