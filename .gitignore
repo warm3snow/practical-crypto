@@ -7,3 +7,4 @@ build
 tools/tlsClient
 tls/tlsclient
 tools/kunpeng_certmanager/itrustee_sdk
+tools/kunpeng_certmanager/scripts/itrustee_sdk
