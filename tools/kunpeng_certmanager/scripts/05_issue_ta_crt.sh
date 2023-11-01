@@ -55,7 +55,8 @@ bash local_sign.sh
 #ll $ITRUSTEE_SDK_PATH/build/pack-Config/output/
 
 cp $ITRUSTEE_SDK_PATH/build/pack-Config/output/config $TA_PATH/
-ll $TA_PATH/
+
+ls -al $TA_PATH/
 
 # 5. 基于生成的config二进制、业务TA公私钥对，编译业务TA。
 # 参考脚本 '03_compile_CATA.sh'
