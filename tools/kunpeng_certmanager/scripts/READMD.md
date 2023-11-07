@@ -56,11 +56,12 @@ openssl req -new -x509 -key private_key.pem -out root.crt -subj "/C=CN/L=F/O=tes
 注：private_key.pem，root.crt, manifest.txt 需要妥善保管
 
 ## 二级证书生成
+二级证书会基于root.key和root.crt签发，运行04_configure_second_crt可以自动签发二级证书
 
 ## Scripts功能介绍
-- 首先需要将private_key.pem/config/manifest.txt配置到scripts/certmanager目录下（该目录如果没有需要手工创建）
-- 运行脚本[01_download_itrustee_depends.sh](01_download_itrustee_depends.sh)下载itrustee依赖库
-- 运行脚本[02_configure_root_crt.sh](02_configure_root_crt.sh) 生成root证书，并提取root公钥，配置到certmanager TA程序中（硬编码）
-- 运行脚本[03_compile_certmanager.sh](03_compile_certmanager.sh)生成certmanager CA/TA程序
-- 运行脚本[04_configure_second_crt.sh](04_configure_second_crt.sh)生成certmanager 二级证书并导入（需要uncomment脚本中的部分代码）
-- 运行脚本[05_issue_ta_crt.sh](05_issue_ta_crt.sh)生成TA开发者证书
+- 首先需要将private_key.pem、config、manifest.txt配置到scripts/root（该目录如果没有需要手工创建）
+- 运行脚本[01_download_itrustee_depends.sh](01_download_itrustee_depends.sh)下载itrustee依赖库及certmanager TA源码
+- 运行脚本[02_configure_root_crt.sh](02_configure_root_crt.sh) 生成root证书，并提取root公钥，配置到certmanager TA程序中（硬编码）（root物料在root目录）
+- 运行脚本[03_compile_certmanager.sh](03_compile_certmanager.sh)配置certmanager CA源码，并编译CA/TA程序
+- 运行脚本[04_configure_second_crt.sh](04_configure_second_crt.sh)生成certmanager二级证书并导入（二级证书物料包在second目录）
+- 运行脚本[05_issue_ta_crt.sh](05_issue_ta_crt.sh)生成TA开发者证书（TA物料包在ta目录）
