@@ -13,7 +13,7 @@ import (
 	"crypto/x509"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/pkg/errors"
-	tjx509 "github.com/tjfoc/gmsm/x509"
+	tjx509 "github.com/warm3snow/gmsm/x509"
 )
 
 // ParsePrivateKey parse bytes to a private key.
