@@ -29,6 +29,13 @@ func SM2Sign(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, origin []byte) (sig
 		return nil, err
 	}
 
+	//defer func() {
+	//	err = c.SDFReleasePrivateKeyAccessRight(s, keyIndex+10000)
+	//	if err != nil {
+	//		log.Fatalf("failed to SDFReleasePrivateKeyAccessRight, err = %v", err)
+	//	}
+	//}()
+
 	// must use sm3 to hash origin
 	pub, err := ExportECDSAPublicKey(c, s, keyIndex)
 	if err != nil {

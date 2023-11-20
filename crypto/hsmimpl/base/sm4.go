@@ -41,8 +41,8 @@ func SM4Encrypt(c *Ctx, s SessionHandle, keyIndex uint, origin []byte, blockMode
 			return nil, err
 		}
 		cipherWithPad = append(iv, out[:outLen]...)
-		fmt.Printf("iv: %x\n", iv)
-		fmt.Printf("iv2: %x\n", iv2)
+		//fmt.Printf("iv: %x\n", iv)
+		//fmt.Printf("iv2: %x\n", iv2)
 
 	case "ECB":
 		plainWithPad := PKCS5Padding(origin, BLOCK_SIZE)
