@@ -2,34 +2,78 @@ package hsmimpl
 
 import (
 	"encoding/hex"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/warm3snow/gmsm/sm3"
 	"log"
+	"os"
+	"runtime"
 	"testing"
 )
 
-func TestHsmSM3(t *testing.T) {
-	t.Skip()
+var (
+	msg = []byte("hello world")
+)
 
-	origin := []byte("hello")
+func libPath() string {
+	wd, _ := os.Getwd()
+	if runtime.GOOS == "darwin" {
+		return wd + "/lib/libswsds.dylib"
+	} else if runtime.GOOS == "linux" {
+		return wd + "/lib/libswsds.so"
+	}
+	return wd
+}
 
-	c, err := New("./lib/libswsds.dylib")
+func TestSM3(t *testing.T) {
+	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	v, err := c.Hash("SM3", origin)
+	msgHash, err := csp.Hash("SM3", msg)
 	assert.NoError(t, err)
 
-	assert.Equal(t, v, sm3.Sm3Sum(origin))
+	assert.Equal(t, msgHash, sm3.Sm3Sum(msg))
 }
 
 func TestHsmSM3HMac(t *testing.T) {
-	origin := []byte("hello")
-
-	c, err := New("./lib/libswsds.dylib")
+	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	v, err := c.HMac("SM3", "1", origin)
+	msgHmac, err := csp.HMac("SM3", "1", msg)
 	assert.NoError(t, err)
 
-	log.Println(hex.EncodeToString(v))
+	log.Println(hex.EncodeToString(msgHmac))
+}
+
+//func TestEncAndDec(t *testing.T) {
+//	csp, err := New(libPath())
+//	//Test SM2 enc and dec
+//
+//	cipherText, err := csp.Enc("SM2", "1", msg, "")
+//	assert.NoError(t, err)
+//	plainText, err = csp.Dec("SM2", priKey, cipherText, "")
+//	assert.NoError(t, err)
+//	assert.Equal(t, msg, plainText)
+//
+//	//Test SM4 enc and dec
+//	key = []byte("1234567890123456")
+//	cipherText, err = csp.Enc("SM4", key, msg, "")
+//	assert.NoError(t, err)
+//	plainText, err = csp.Dec("SM4", key, cipherText, "")
+//	assert.NoError(t, err)
+//	assert.Equal(t, msg, plainText)
+//}
+
+func TestSignAndVerify(t *testing.T) {
+	csp, err := New(libPath())
+	//Test SM2 enc and dec
+
+	signature, err := csp.Sign("SM2", "1", msg, []byte("11111111"))
+	assert.NoError(t, err)
+
+	fmt.Printf("signature: %s\n", hex.EncodeToString(signature))
+
+	pass, err := csp.Verify("SM2", "1", msg, signature)
+	assert.NoError(t, err)
+	assert.True(t, pass)
 }

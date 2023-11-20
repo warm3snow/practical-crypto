@@ -109,7 +109,7 @@ func (s softimpl) Dec(algo string, key, cipherText []byte, mode string) ([]byte,
 	return plainText, nil
 }
 
-func (s softimpl) Sign(algo, key string, plain []byte) ([]byte, error) {
+func (s softimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error) {
 	priv, err := ParsePrivateKey([]byte(key))
 	if err != nil {
 		return nil, err

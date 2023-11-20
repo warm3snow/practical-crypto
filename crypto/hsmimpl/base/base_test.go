@@ -22,6 +22,8 @@ func libPath() string {
 	wd, _ := os.Getwd()
 	if runtime.GOOS == "darwin" {
 		return wd + "/../lib/libswsds.dylib"
+	} else if runtime.GOOS == "linux" {
+		return wd + "/../lib/libswsds.so"
 	}
 	return wd
 }

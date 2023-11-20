@@ -24,7 +24,7 @@ type CSP interface {
 	HMac(algo, key string, plain []byte) ([]byte, error)
 
 	// Sign returns the signature data against the specified algorithm
-	Sign(algo, key string, plain []byte) ([]byte, error)
+	Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error)
 
 	// Verify returns the verification result against the specified algorithm
 	Verify(algo, key string, plain, sig []byte) (bool, error)
