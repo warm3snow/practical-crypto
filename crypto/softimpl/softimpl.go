@@ -47,19 +47,19 @@ func (s softimpl) Hash(algo string, origin []byte) ([]byte, error) {
 	}
 }
 
-func (s softimpl) Enc(algo string, key, plainText []byte, mode string) ([]byte, error) {
+func (s softimpl) Enc(algo, key string, plainText []byte, mode string) ([]byte, error) {
 	var (
 		ciphertext []byte
 		err        error
 	)
 	switch strings.ToUpper(algo) {
 	case "SM4":
-		ciphertext, err = sm4.Sm4Cbc(key, plainText, true)
+		ciphertext, err = sm4.Sm4Cbc([]byte(key), plainText, true)
 		if err != nil {
 			return nil, err
 		}
 	case "SM2":
-		pub, err := x509.ParseSm2PublicKey(key)
+		pub, err := x509.ParseSm2PublicKey([]byte(key))
 		if err != nil {
 			return nil, err
 		}
@@ -78,19 +78,19 @@ func (s softimpl) Enc(algo string, key, plainText []byte, mode string) ([]byte, 
 	return ciphertext, nil
 }
 
-func (s softimpl) Dec(algo string, key, cipherText []byte, mode string) ([]byte, error) {
+func (s softimpl) Dec(algo, key string, cipherText []byte, mode string) ([]byte, error) {
 	var (
 		plainText []byte
 		err       error
 	)
 	switch strings.ToUpper(algo) {
 	case "SM4":
-		plainText, err = sm4.Sm4Cbc(key, cipherText, false)
+		plainText, err = sm4.Sm4Cbc([]byte(key), cipherText, false)
 		if err != nil {
 			return nil, err
 		}
 	case "SM2":
-		priv, err := x509.ParsePKCS8PrivateKey(key, nil)
+		priv, err := x509.ParsePKCS8PrivateKey([]byte(key), nil)
 		if err != nil {
 			return nil, err
 		}

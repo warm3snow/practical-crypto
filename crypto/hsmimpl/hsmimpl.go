@@ -20,28 +20,69 @@ type hsmimpl struct {
 }
 
 func (h *hsmimpl) GenSymKey(algo string, keySize int) ([]byte, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *hsmimpl) Enc(algo string, key, plain []byte, mode string) ([]byte, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *hsmimpl) Dec(algo string, key, plain []byte, mode string) ([]byte, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *hsmimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error) {
+	//algo string, keySize int
 	switch strings.ToUpper(algo) {
-	case "SM2":
+	case "SM4":
 		session, err := h.getSession()
 		if err != nil {
 			return nil, err
 		}
 		defer h.returnSession(err, session)
+		return base.SM4GenKey(h.ctx, session, 16)
+	default:
+		return nil, errors.New("Only support SM4 now")
+	}
+}
+
+func (h *hsmimpl) Enc(algo, key string, plainText []byte, mode string) ([]byte, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer h.returnSession(err, session)
+
+	switch strings.ToUpper(algo) {
+	case "SM4":
+		// check keyId
+		keyIndex, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, err
+		}
+		return base.SM4Encrypt(h.ctx, session, uint(keyIndex), plainText, mode)
+	default:
+		return nil, errors.New("Only support SM4 now")
+	}
+}
+
+func (h *hsmimpl) Dec(algo, key string, cipherText []byte, mode string) ([]byte, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer h.returnSession(err, session)
+
+	switch strings.ToUpper(algo) {
+	case "SM4":
+		// check keyId
+		keyIndex, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, err
+		}
+		return base.SM4Decrypt(h.ctx, session, uint(keyIndex), cipherText, mode)
+	default:
+		return nil, errors.New("Only support SM4 now")
+	}
+}
+
+func (h *hsmimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer h.returnSession(err, session)
+
+	switch strings.ToUpper(algo) {
+	case "SM2":
 		// check keyId
 		keyIndex, err := strconv.Atoi(key)
 		if err != nil {
@@ -59,13 +100,14 @@ func (h *hsmimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte
 }
 
 func (h *hsmimpl) Verify(algo, key string, plain, sig []byte) (bool, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return false, err
+	}
+	defer h.returnSession(err, session)
+
 	switch strings.ToUpper(algo) {
 	case "SM2":
-		session, err := h.getSession()
-		if err != nil {
-			return false, err
-		}
-		defer h.returnSession(err, session)
 		// check keyId
 		keyIndex, err := strconv.Atoi(key)
 		if err != nil {
@@ -109,13 +151,14 @@ func New(lib string) (*hsmimpl, error) {
 }
 
 func (h hsmimpl) Hash(algo string, origin []byte) ([]byte, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer h.returnSession(err, session)
+
 	switch strings.ToUpper(algo) {
 	case "SM3":
-		session, err := h.getSession()
-		if err != nil {
-			return nil, err
-		}
-		defer h.returnSession(err, session)
 		return base.SM3Hash(h.ctx, session, origin)
 	default:
 		return nil, errors.New("Only support SM3 now")
@@ -123,13 +166,14 @@ func (h hsmimpl) Hash(algo string, origin []byte) ([]byte, error) {
 }
 
 func (h hsmimpl) HMac(algo, key string, plain []byte) ([]byte, error) {
+	session, err := h.getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer h.returnSession(err, session)
+
 	switch strings.ToUpper(algo) {
 	case "SM3":
-		session, err := h.getSession()
-		if err != nil {
-			return nil, err
-		}
-		defer h.returnSession(err, session)
 		//check keyId
 		keyIndex, err := strconv.Atoi(key)
 		if err != nil {

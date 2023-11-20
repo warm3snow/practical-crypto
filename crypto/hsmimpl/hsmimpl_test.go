@@ -64,7 +64,7 @@ func TestHsmSM3HMac(t *testing.T) {
 //	assert.Equal(t, msg, plainText)
 //}
 
-func TestSignAndVerify(t *testing.T) {
+func TestSM2SignAndVerify(t *testing.T) {
 	csp, err := New(libPath())
 	//Test SM2 enc and dec
 
@@ -76,4 +76,25 @@ func TestSignAndVerify(t *testing.T) {
 	pass, err := csp.Verify("SM2", "1", msg, signature)
 	assert.NoError(t, err)
 	assert.True(t, pass)
+}
+
+func TestSM4(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	//ecb mode
+	cipherText, err := csp.Enc("SM4", "1", msg, "ECB")
+	assert.NoError(t, err)
+
+	plainText, err := csp.Dec("SM4", "1", cipherText, "ECB")
+	assert.NoError(t, err)
+	assert.Equal(t, msg, plainText)
+
+	// cbc mode
+	cipherText, err = csp.Enc("SM4", "1", msg, "CBC_PKCS5")
+	assert.NoError(t, err)
+
+	plainText, err = csp.Dec("SM4", "1", cipherText, "CBC_PKCS5")
+	assert.NoError(t, err)
+	assert.Equal(t, msg, plainText)
 }

@@ -15,10 +15,10 @@ type CSP interface {
 	Hash(algo string, origin []byte) ([]byte, error)
 
 	// Enc returns the encrypted data against the specified algorithm
-	Enc(algo string, key, plainText []byte, mode string) ([]byte, error)
+	Enc(algo, key string, plainText []byte, mode string) ([]byte, error)
 
 	// Dec returns the decrypted data against the specified algorithm
-	Dec(algo string, key, cipherText []byte, mode string) ([]byte, error)
+	Dec(algo, key string, cipherText []byte, mode string) ([]byte, error)
 
 	// HMac returns the hmac data against the specified algorithm
 	HMac(algo, key string, plain []byte) ([]byte, error)
