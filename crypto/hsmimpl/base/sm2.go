@@ -103,6 +103,8 @@ func SM2Enc(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, plainText []byte) ([
 	if err != nil {
 		return nil, err
 	}
+
+	//FIXME: how to marshal sm2 ECCCipher? ans1 not work here
 	return asn1.Marshal(encData)
 }
 
