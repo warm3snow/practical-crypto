@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	msg = []byte("hello world")
+	msg           = []byte("hello world")
+	KeyPwdForKey1 = "11111111"
 )
 
 func libPath() string {
@@ -68,7 +69,7 @@ func TestSM2SignAndVerify(t *testing.T) {
 	csp, err := New(libPath())
 	//Test SM2 enc and dec
 
-	signature, err := csp.Sign("SM2", "1", msg, []byte("11111111"))
+	signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
 	assert.NoError(t, err)
 
 	fmt.Printf("signature: %s\n", hex.EncodeToString(signature))
@@ -78,23 +79,35 @@ func TestSM2SignAndVerify(t *testing.T) {
 	assert.True(t, pass)
 }
 
+func TestSM2EncAndDec(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	cipherText, err := csp.Enc("SM2", "1", KeyPwdForKey1, msg, "")
+	assert.NoError(t, err)
+
+	plainText, err := csp.Dec("SM2", "1", KeyPwdForKey1, cipherText, "")
+	assert.NoError(t, err)
+	assert.Equal(t, msg, plainText)
+}
+
 func TestSM4(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
 	//ecb mode
-	cipherText, err := csp.Enc("SM4", "1", msg, "ECB")
+	cipherText, err := csp.Enc("SM4", "1", "", msg, "ECB")
 	assert.NoError(t, err)
 
-	plainText, err := csp.Dec("SM4", "1", cipherText, "ECB")
+	plainText, err := csp.Dec("SM4", "1", "", cipherText, "ECB")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 
 	// cbc mode
-	cipherText, err = csp.Enc("SM4", "1", msg, "CBC_PKCS5")
+	cipherText, err = csp.Enc("SM4", "1", "", msg, "CBC_PKCS5")
 	assert.NoError(t, err)
 
-	plainText, err = csp.Dec("SM4", "1", cipherText, "CBC_PKCS5")
+	plainText, err = csp.Dec("SM4", "1", "", cipherText, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 }

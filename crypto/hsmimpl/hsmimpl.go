@@ -34,66 +34,72 @@ func (h *hsmimpl) GenSymKey(algo string, keySize int) ([]byte, error) {
 	}
 }
 
-func (h *hsmimpl) Enc(algo, key string, plainText []byte, mode string) ([]byte, error) {
+func (h *hsmimpl) Enc(algo, key, keyPwd string, plainText []byte, mode string) ([]byte, error) {
 	session, err := h.getSession()
 	if err != nil {
 		return nil, err
 	}
 	defer h.returnSession(err, session)
 
+	// check keyId
+	keyIndex, err := strconv.Atoi(key)
+	if err != nil {
+		return nil, err
+	}
+
 	switch strings.ToUpper(algo) {
 	case "SM4":
-		// check keyId
-		keyIndex, err := strconv.Atoi(key)
-		if err != nil {
-			return nil, err
-		}
 		return base.SM4Encrypt(h.ctx, session, uint(keyIndex), plainText, mode)
+	case "SM2":
+		return base.SM2Dec(h.ctx, session, uint(keyIndex), []byte(keyPwd), plainText)
 	default:
-		return nil, errors.New("Only support SM4 now")
+		return nil, errors.New("Only support [SM2 | SM4] now")
 	}
 }
 
-func (h *hsmimpl) Dec(algo, key string, cipherText []byte, mode string) ([]byte, error) {
+func (h *hsmimpl) Dec(algo, key, keyPwd string, cipherText []byte, mode string) ([]byte, error) {
 	session, err := h.getSession()
 	if err != nil {
 		return nil, err
 	}
 	defer h.returnSession(err, session)
+
+	// check keyId
+	keyIndex, err := strconv.Atoi(key)
+	if err != nil {
+		return nil, err
+	}
 
 	switch strings.ToUpper(algo) {
 	case "SM4":
-		// check keyId
-		keyIndex, err := strconv.Atoi(key)
-		if err != nil {
-			return nil, err
-		}
 		return base.SM4Decrypt(h.ctx, session, uint(keyIndex), cipherText, mode)
+	case "SM2":
+		return base.SM2Dec(h.ctx, session, uint(keyIndex), []byte(keyPwd), cipherText)
 	default:
-		return nil, errors.New("Only support SM4 now")
+		return nil, errors.New("Only support [SM2 | SM4] now")
 	}
 }
 
-func (h *hsmimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error) {
+func (h *hsmimpl) Sign(algo, key, keyPwd string, plain []byte) ([]byte, error) {
 	session, err := h.getSession()
 	if err != nil {
 		return nil, err
 	}
 	defer h.returnSession(err, session)
+
+	// check keyId
+	keyIndex, err := strconv.Atoi(key)
+	if err != nil {
+		return nil, err
+	}
 
 	switch strings.ToUpper(algo) {
 	case "SM2":
-		// check keyId
-		keyIndex, err := strconv.Atoi(key)
-		if err != nil {
-			return nil, err
+		if len(keyPwd) == 0 {
+			return base.SM2Sign(h.ctx, session, uint(keyIndex), nil, plain)
+		} else {
+			return base.SM2Sign(h.ctx, session, uint(keyIndex), []byte(keyPwd), plain)
 		}
-		// get keyPwd
-		var keyPwd []byte
-		if len(option) > 0 {
-			keyPwd = option[0]
-		}
-		return base.SM2Sign(h.ctx, session, uint(keyIndex), keyPwd, plain)
 	default:
 		return nil, errors.New("Only support SM2 now")
 	}

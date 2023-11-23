@@ -47,7 +47,7 @@ func (s softimpl) Hash(algo string, origin []byte) ([]byte, error) {
 	}
 }
 
-func (s softimpl) Enc(algo, key string, plainText []byte, mode string) ([]byte, error) {
+func (s softimpl) Enc(algo, key, keyPwd string, plainText []byte, mode string) ([]byte, error) {
 	var (
 		ciphertext []byte
 		err        error
@@ -78,7 +78,7 @@ func (s softimpl) Enc(algo, key string, plainText []byte, mode string) ([]byte, 
 	return ciphertext, nil
 }
 
-func (s softimpl) Dec(algo, key string, cipherText []byte, mode string) ([]byte, error) {
+func (s softimpl) Dec(algo, key, keyPwd string, cipherText []byte, mode string) ([]byte, error) {
 	var (
 		plainText []byte
 		err       error
@@ -109,7 +109,7 @@ func (s softimpl) Dec(algo, key string, cipherText []byte, mode string) ([]byte,
 	return plainText, nil
 }
 
-func (s softimpl) Sign(algo, key string, plain []byte, option ...[]byte) ([]byte, error) {
+func (s softimpl) Sign(algo, key, keyPwd string, plain []byte) ([]byte, error) {
 	priv, err := ParsePrivateKey([]byte(key))
 	if err != nil {
 		return nil, err

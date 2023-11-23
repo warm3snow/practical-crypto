@@ -48,17 +48,17 @@ func TestInitCryptoForHsmimpl(t *testing.T) {
 	assert.NotNil(t, dgst2)
 	assert.Equal(t, dgst, dgst2)
 
-	sig, err := csp.Sign("SM2", keyIndex, msg, []byte("11111111"))
+	sig, err := csp.Sign("SM2", keyIndex, "", msg)
 	assert.NoError(t, err)
 	assert.NotNil(t, sig)
 	ok, err := csp.Verify("SM2", keyIndex, msg, sig)
 	assert.NoError(t, err)
 	assert.True(t, ok)
 
-	cipherText, err := csp.Enc("SM4", keyIndex, msg, "CBC_PKCS5")
+	cipherText, err := csp.Enc("SM4", keyIndex, "", msg, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.NotNil(t, cipherText)
-	plainText, err := csp.Dec("SM4", keyIndex, cipherText, "CBC_PKCS5")
+	plainText, err := csp.Dec("SM4", keyIndex, "", cipherText, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 }
@@ -83,17 +83,17 @@ func TestInitCryptoForSoftimpl(t *testing.T) {
 	assert.NotNil(t, dgst2)
 	assert.Equal(t, dgst, dgst2)
 
-	sig, err := csp.Sign("SM2", string(priKey), msg, []byte("11111111"))
+	sig, err := csp.Sign("SM2", string(priKey), "", msg)
 	assert.NoError(t, err)
 	assert.NotNil(t, sig)
 	ok, err := csp.Verify("SM2", string(pubKey), msg, sig)
 	assert.NoError(t, err)
 	assert.True(t, ok)
 
-	cipherText, err := csp.Enc("SM4", string(symKey), msg, "CBC_PKCS5")
+	cipherText, err := csp.Enc("SM4", string(symKey), "", msg, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.NotNil(t, cipherText)
-	plainText, err := csp.Dec("SM4", string(symKey), cipherText, "CBC_PKCS5")
+	plainText, err := csp.Dec("SM4", string(symKey), "", cipherText, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 }

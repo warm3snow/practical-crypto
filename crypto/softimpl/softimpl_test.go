@@ -33,17 +33,17 @@ func TestEncAndDec(t *testing.T) {
 	priKey, err := x509.MarshalSm2PrivateKey(sm2Key, nil)
 	assert.NoError(t, err)
 
-	cipherText, err = csp.Enc("SM2", string(pubKey), msg, "")
+	cipherText, err = csp.Enc("SM2", string(pubKey), "", msg, "")
 	assert.NoError(t, err)
-	plainText, err = csp.Dec("SM2", string(priKey), cipherText, "")
+	plainText, err = csp.Dec("SM2", string(priKey), "", cipherText, "")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 
 	//Test SM4 enc and dec
 	key = []byte("1234567890123456")
-	cipherText, err = csp.Enc("SM4", string(key), msg, "")
+	cipherText, err = csp.Enc("SM4", string(key), "", msg, "")
 	assert.NoError(t, err)
-	plainText, err = csp.Dec("SM4", string(key), cipherText, "")
+	plainText, err = csp.Dec("SM4", string(key), "", cipherText, "")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
 }
