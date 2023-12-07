@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -110,4 +111,65 @@ func TestSM4(t *testing.T) {
 	plainText, err = csp.Dec("SM4", "1", "", cipherText, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
+}
+
+func TestHMacParallel(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	num := 500
+	doneChan := make(chan struct{}, num)
+
+	for i := 0; i < num; i++ {
+		go func() {
+			//v, err := csp.HMac("SM3", "1", msg)
+			v, err := csp.Hash("SM3", msg)
+
+			assert.NoError(t, err)
+
+			log.Println(hex.EncodeToString(v))
+			doneChan <- struct{}{}
+		}()
+	}
+	for i := 0; i < num; i++ {
+		<-doneChan
+	}
+}
+
+func BenchmarkSM4(b *testing.B) {
+	csp, err := New(libPath())
+	assert.NoError(b, err)
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, err := csp.Enc("SM4", "1", "", msg, "CBC_PKCS5")
+			assert.NoError(b, err)
+		}
+	})
+}
+
+func TestSM4Parallel(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	num := 50
+	//doneChan := make(chan struct{}, num)
+
+	for i := 0; i < num; i++ {
+		msg = []byte(strings.Repeat("hello world", i+1))
+		//go func() {
+		cipherText, err := csp.Enc("SM4", "1", "12321", msg, "ECB")
+		assert.NoError(t, err)
+
+		plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
+		assert.NoError(t, err)
+		assert.Equal(t, msg, plainText)
+
+		//time.Sleep(10 * time.Second)
+		//doneChan <- struct{}{}
+		//}()
+	}
+	//for i := 0; i < num; i++ {
+	//	<-doneChan
+	//}
 }
