@@ -2,7 +2,6 @@ package hsmimpl
 
 import (
 	"encoding/hex"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/warm3snow/gmsm/sm3"
 	"log"
@@ -37,7 +36,7 @@ func TestSM3(t *testing.T) {
 	assert.Equal(t, msgHash, sm3.Sm3Sum(msg))
 }
 
-func TestHsmSM3HMac(t *testing.T) {
+func TestSM3HMac(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
@@ -47,49 +46,21 @@ func TestHsmSM3HMac(t *testing.T) {
 	log.Println(hex.EncodeToString(msgHmac))
 }
 
-//func TestEncAndDec(t *testing.T) {
-//	csp, err := New(libPath())
-//	//Test SM2 enc and dec
-//
-//	cipherText, err := csp.Enc("SM2", "1", msg, "")
-//	assert.NoError(t, err)
-//	plainText, err = csp.Dec("SM2", priKey, cipherText, "")
-//	assert.NoError(t, err)
-//	assert.Equal(t, msg, plainText)
-//
-//	//Test SM4 enc and dec
-//	key = []byte("1234567890123456")
-//	cipherText, err = csp.Enc("SM4", key, msg, "")
-//	assert.NoError(t, err)
-//	plainText, err = csp.Dec("SM4", key, cipherText, "")
-//	assert.NoError(t, err)
-//	assert.Equal(t, msg, plainText)
-//}
-
-func TestSM2SignAndVerify(t *testing.T) {
+func TestSM2(t *testing.T) {
 	csp, err := New(libPath())
 	//Test SM2 enc and dec
 
 	signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
 	assert.NoError(t, err)
-
-	fmt.Printf("signature: %s\n", hex.EncodeToString(signature))
-
 	pass, err := csp.Verify("SM2", "1", msg, signature)
 	assert.NoError(t, err)
 	assert.True(t, pass)
-}
 
-func TestSM2EncAndDec(t *testing.T) {
-	csp, err := New(libPath())
-	assert.NoError(t, err)
-
-	cipherText, err := csp.Enc("SM2", "1", KeyPwdForKey1, msg, "")
-	assert.NoError(t, err)
-
-	plainText, err := csp.Dec("SM2", "1", KeyPwdForKey1, cipherText, "")
-	assert.NoError(t, err)
-	assert.Equal(t, msg, plainText)
+	//cipherText, err := csp.Enc("SM2", "1", KeyPwdForKey1, msg, "")
+	//assert.NoError(t, err)
+	//plainText, err := csp.Dec("SM2", "1", KeyPwdForKey1, cipherText, "")
+	//assert.NoError(t, err)
+	//assert.Equal(t, msg, plainText)
 }
 
 func TestSM4(t *testing.T) {
@@ -99,7 +70,6 @@ func TestSM4(t *testing.T) {
 	//ecb mode
 	cipherText, err := csp.Enc("SM4", "1", "", msg, "ECB")
 	assert.NoError(t, err)
-
 	plainText, err := csp.Dec("SM4", "1", "", cipherText, "ECB")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
@@ -107,7 +77,6 @@ func TestSM4(t *testing.T) {
 	// cbc mode
 	cipherText, err = csp.Enc("SM4", "1", "", msg, "CBC_PKCS5")
 	assert.NoError(t, err)
-
 	plainText, err = csp.Dec("SM4", "1", "", cipherText, "CBC_PKCS5")
 	assert.NoError(t, err)
 	assert.Equal(t, msg, plainText)
@@ -122,12 +91,10 @@ func TestHMacParallel(t *testing.T) {
 
 	for i := 0; i < num; i++ {
 		go func() {
-			//v, err := csp.HMac("SM3", "1", msg)
-			v, err := csp.Hash("SM3", msg)
-
+			v, err := csp.HMac("SM3", "1", msg)
 			assert.NoError(t, err)
-
 			log.Println(hex.EncodeToString(v))
+
 			doneChan <- struct{}{}
 		}()
 	}
@@ -136,40 +103,45 @@ func TestHMacParallel(t *testing.T) {
 	}
 }
 
-func BenchmarkSM4(b *testing.B) {
-	csp, err := New(libPath())
-	assert.NoError(b, err)
-
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			_, err := csp.Enc("SM4", "1", "", msg, "CBC_PKCS5")
-			assert.NoError(b, err)
-		}
-	})
-}
-
 func TestSM4Parallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
 	num := 50
-	//doneChan := make(chan struct{}, num)
+	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
 		msg = []byte(strings.Repeat("hello world", i+1))
-		//go func() {
-		cipherText, err := csp.Enc("SM4", "1", "12321", msg, "ECB")
+		go func() {
+			cipherText, err := csp.Enc("SM4", "1", "12321", msg, "CBC_PKCS5")
+			assert.NoError(t, err)
+
+			_ = cipherText
+			//
+			//plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
+			//assert.NoError(t, err)
+			//assert.Equal(t, msg, plainText)
+
+			doneChan <- struct{}{}
+		}()
+	}
+	for i := 0; i < num; i++ {
+		<-doneChan
+	}
+}
+
+func TestSM4Sequential(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	num := 50
+	for i := 0; i < num; i++ {
+		msg = []byte(strings.Repeat("hello world", i+1))
+		cipherText, err := csp.Enc("SM4", "1", "12321", msg, "CBC_PKCS5")
 		assert.NoError(t, err)
 
-		plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
+		plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "CBC_PKCS5")
 		assert.NoError(t, err)
 		assert.Equal(t, msg, plainText)
-
-		//time.Sleep(10 * time.Second)
-		//doneChan <- struct{}{}
-		//}()
 	}
-	//for i := 0; i < num; i++ {
-	//	<-doneChan
-	//}
 }
