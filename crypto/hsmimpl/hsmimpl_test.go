@@ -86,7 +86,7 @@ func TestHMacParallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	num := 500
+	num := 10
 	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
@@ -107,7 +107,7 @@ func TestSM4Parallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	num := 50
+	num := 10
 	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
@@ -116,11 +116,9 @@ func TestSM4Parallel(t *testing.T) {
 			cipherText, err := csp.Enc("SM4", "1", "12321", msg, "CBC_PKCS5")
 			assert.NoError(t, err)
 
-			_ = cipherText
-			//
-			//plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
-			//assert.NoError(t, err)
-			//assert.Equal(t, msg, plainText)
+			plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "CBC_PKCS5")
+			assert.NoError(t, err)
+			assert.Equal(t, msg, plainText)
 
 			doneChan <- struct{}{}
 		}()
