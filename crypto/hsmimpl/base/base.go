@@ -8,7 +8,8 @@ package base
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <sdf.h> //GM-T0018 sdf header
+#include <swsds.h> //GM-T0018 sdf header
+#include <pthread.h>
 
 
 typedef unsigned char     SGD_UCHAR;
