@@ -13,6 +13,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/pkg/errors"
+	"log"
 )
 
 const (
@@ -24,6 +25,13 @@ func SM4Encrypt(c *Ctx, s SessionHandle, keyIndex uint, origin []byte, blockMode
 	if err != nil {
 		return nil, errors.WithMessagef(err, "failed to get sym keyHandle, keyIndex = %d", keyIndex)
 	}
+	defer func() {
+		err := c.SDFDestroyKey(s, keyHandle)
+		if err != nil {
+			log.Printf("failed to destroy key, %s\n", err)
+			return
+		}
+	}()
 	iv := make([]byte, BLOCK_SIZE)
 	if _, err := rand.Read(iv); err != nil {
 		return nil, err
@@ -68,6 +76,13 @@ func SM4Decrypt(c *Ctx, s SessionHandle, keyIndex uint, ciphertext []byte, block
 	if err != nil {
 		return nil, errors.WithMessagef(err, "failed to get sym keyHandle, keyIndex = %d", keyIndex)
 	}
+	defer func() {
+		err := c.SDFDestroyKey(s, keyHandle)
+		if err != nil {
+			log.Printf("failed to destroy key, %s\n", err)
+			return
+		}
+	}()
 
 	switch blockMode {
 	case "CBC_PKCS5":

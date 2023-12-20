@@ -51,7 +51,7 @@ func (h *hsmimpl) Enc(algo, key, keyPwd string, plainText []byte, mode string) (
 	case "SM4":
 		return base.SM4Encrypt(h.ctx, session, uint(keyIndex), plainText, mode)
 	case "SM2":
-		return base.SM2Dec(h.ctx, session, uint(keyIndex), []byte(keyPwd), plainText)
+		return base.SM2Enc(h.ctx, session, uint(keyIndex), []byte(keyPwd), plainText)
 	default:
 		return nil, errors.New("Only support [SM2 | SM4] now")
 	}
