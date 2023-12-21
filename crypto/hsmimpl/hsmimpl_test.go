@@ -155,7 +155,7 @@ func TestSM2Parallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	num := 10
+	num := 100
 	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
