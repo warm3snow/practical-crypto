@@ -146,3 +146,27 @@ func TestSM4Sequential(t *testing.T) {
 		assert.Equal(t, msg, plainText)
 	}
 }
+
+func TestSM2Parallel(t *testing.T) {
+	csp, err := New(libPath())
+	assert.NoError(t, err)
+
+	num := 100
+	doneChan := make(chan struct{}, num)
+
+	for i := 0; i < num; i++ {
+		go func() {
+			signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
+			assert.NoError(t, err)
+
+			pass, err := csp.Verify("SM2", "1", msg, signature)
+			assert.NoError(t, err)
+			assert.True(t, pass)
+
+			doneChan <- struct{}{}
+		}()
+	}
+	for i := 0; i < num; i++ {
+		<-doneChan
+	}
+}
