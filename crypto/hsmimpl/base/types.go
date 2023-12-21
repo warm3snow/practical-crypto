@@ -7,7 +7,8 @@ SPDX-License-Identifier: Apache-2.0
 
 package base
 
-// DeviceInfo sdf device info
+import "C"
+
 type DeviceInfo struct {
 	IssuerName      string
 	DeviceName      string
@@ -20,7 +21,6 @@ type DeviceInfo struct {
 	BufferSize      uint
 }
 
-// DeviceRunStatus sdf device status
 type DeviceRunStatus struct {
 	Onboot      uint
 	Service     uint
@@ -32,20 +32,17 @@ type DeviceRunStatus struct {
 	Reserve2    uint
 }
 
-// ECCrefPublicKey ecc public key
 type ECCrefPublicKey struct {
 	Bits uint
 	X    string
 	Y    string
 }
 
-// ECCrefPrivateKey ecc private key
 type ECCrefPrivateKey struct {
 	Bits uint
 	K    string
 }
 
-// ECCCipher ecc cipher
 type ECCCipher struct {
 	X string
 	Y string
@@ -54,7 +51,6 @@ type ECCCipher struct {
 	C string
 }
 
-// ECCSignature ecc signature
 type ECCSignature struct {
 	R string
 	S string

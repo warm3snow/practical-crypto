@@ -1,36 +1,40 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
+	"chainmaker.org/chainmaker/common/v3/crypto/sym/util"
 	"crypto/rand"
-	"encoding/hex"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/warm3snow/gmsm/sm3"
-	"github.com/warm3snow/practical-crypto/utils"
-	"log"
 	"os"
 	"runtime"
 	"testing"
+
+	"github.com/tjfoc/gmsm/sm3"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
-	plain    = []byte("helloworld")
+	plain    = []byte("chainmaker")
 	keyIndex = uint(1)
 )
 
 func libPath() string {
 	wd, _ := os.Getwd()
 	if runtime.GOOS == "darwin" {
-		return wd + "/../lib/libswsds.dylib"
-	} else if runtime.GOOS == "linux" {
-		return wd + "/../lib/libswsds.so"
+		return wd + "/libswsds.dylib"
 	}
 	return wd
 }
 
 func Connect(t *testing.T) (c *Ctx, deviceHandle SessionHandle, sessionHandle SessionHandle) {
-	p := libPath()
-	c = New(p)
+	c = New(libPath())
 	deviceHandle, err := c.SDFOpenDevice()
 	if err != nil {
 		t.Fatal("open device error: ", err)
@@ -59,7 +63,7 @@ func Release(t *testing.T, c *Ctx, deviceHandle SessionHandle, sessionHandle Ses
 
 // 基础函数测试
 func TestGetDeviceInfo(t *testing.T) {
-	t.Skip()
+	//t.Skip()
 	c, d, s := Connect(t)
 	defer Release(t, c, d, s)
 
@@ -216,14 +220,14 @@ func TestEncryptFunc_SM4CBC(t *testing.T) {
 	iv2 := make([]byte, 16)
 	copy(iv2, iv)
 
-	plainWithPad := utils.PKCS5Padding(plain, 16)
+	plainWithPad := util.PKCS5Padding(plain, 16)
 	encData, encDataLength, err := c.SDFEncrypt(s, keyHandle, SGD_SMS4_CBC, iv, plainWithPad, uint(len(plainWithPad)))
 	assert.NoError(t, err)
 
 	decdata, decdataLength, err := c.SDFDecrypt(s, keyHandle, SGD_SMS4_CBC, iv2, encData, encDataLength)
 	assert.NoError(t, err)
 
-	plain2 := utils.PKCS5UnPadding(decdata[:decdataLength])
+	plain2, err := util.PKCS5UnPadding(decdata[:decdataLength])
 	assert.NoError(t, err)
 
 	//fmt.Printf("%d, %X\n", len(plain), plain)
@@ -244,7 +248,7 @@ func TestEncryptFunc_SM4ECB(t *testing.T) {
 	keyHandle, err := c.SDFGetSymmKeyHandle(s, uint(1))
 	assert.NoError(t, err)
 
-	plainWithPad := utils.PKCS5Padding(plain, 16)
+	plainWithPad := util.PKCS5Padding(plain, 16)
 	encData, encDataLength, err := c.SDFEncrypt(s, keyHandle, SGD_SMS4_ECB, nil, plainWithPad, uint(len(plainWithPad)))
 	assert.NoError(t, err)
 
@@ -252,42 +256,7 @@ func TestEncryptFunc_SM4ECB(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, plainWithPad, decdata)
 
-	plainUnpadding := utils.PKCS5UnPadding(decdata)
+	plainUnpadding, err := util.PKCS5UnPadding(decdata)
 	assert.NoError(t, err)
 	assert.Equal(t, plain, plainUnpadding)
-}
-
-func TestSM3(t *testing.T) {
-	//t.Skip()
-	c, d, s := Connect(t)
-	defer Release(t, c, d, s)
-
-	_, err := c.SDFHashInit(s, SGD_SM3, nil, 0)
-	assert.NoError(t, err)
-
-	err = c.SDFHashUpdate(s, plain, uint(len(plain)))
-	assert.NoError(t, err)
-
-	v, vl, err := c.SDFHashFinal(s)
-	assert.NoError(t, err)
-	assert.Equal(t, vl, uint(len(v)))
-	assert.Equal(t, v, sm3.Sm3Sum(plain))
-}
-
-func TestHMAC(t *testing.T) {
-	t.Skip()
-	c, d, s := Connect(t)
-	defer Release(t, c, d, s)
-
-	k, err := c.SDFGetSymmKeyHandle(s, 1)
-	assert.NoError(t, err)
-
-	mac, macLen, err := c.SDFHMAC(s, k, SGD_SM3, plain, uint(len(plain)))
-	assert.NoError(t, err)
-
-	fmt.Println(macLen)
-	fmt.Println(len(mac))
-	assert.Equal(t, macLen, uint(len(mac)))
-
-	log.Println(hex.EncodeToString(mac))
 }
