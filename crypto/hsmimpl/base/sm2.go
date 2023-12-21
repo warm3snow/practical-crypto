@@ -29,12 +29,12 @@ func SM2Sign(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, origin []byte) (sig
 	if err != nil {
 		return nil, err
 	}
-	//defer func(c *Ctx, sessionHandle SessionHandle, keyIndex uint) {
-	//	err := c.SDFReleasePrivateKeyAccessRight(sessionHandle, keyIndex)
-	//	if err != nil {
-	//		log.Println("release private key access right error: ", err)
-	//	}
-	//}(c, s, keyIndex)
+	defer func(c *Ctx, sessionHandle SessionHandle, keyIndex uint) {
+		err := c.SDFReleasePrivateKeyAccessRight(sessionHandle, keyIndex)
+		if err != nil {
+			log.Printf("private key access right has been released: %s", err.Error())
+		}
+	}(c, s, keyIndex+1000)
 
 	// must use sm3 to hash origin
 	pub, err := ExportECDSAPublicKey(c, s, keyIndex)
@@ -95,9 +95,9 @@ func SM2Enc(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, plainText []byte) ([
 	defer func(c *Ctx, sessionHandle SessionHandle, keyIndex uint) {
 		err := c.SDFReleasePrivateKeyAccessRight(sessionHandle, keyIndex)
 		if err != nil {
-			log.Printf("release private key access right error: %v\n", err)
+			log.Printf("private key access right has been released: %s", err.Error())
 		}
-	}(c, s, keyIndex)
+	}(c, s, keyIndex+1000)
 
 	encData, err := c.SDFInternalEncrypt_ECC(s, keyIndex, SGD_SM2, plainText, uint(len(plainText)))
 	if err != nil {
