@@ -10,7 +10,7 @@ package base
 /*
 #cgo windows CFLAGS: -DPACKED_STRUCTURES
 #cgo linux LDFLAGS: -ldl -L /usr/local/lib64 -lswsds
-#cgo darwin LDFLAGS: -ldl
+#cgo darwin LDFLAGS: -ldl -L ../lib -lswsds
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -423,4 +423,23 @@ func (c *Ctx) SDFHMAC(sessionHandle SessionHandle, hKeyHandle SessionHandle, uiA
 	mac = SgdUCHARArrToByteArr(pucMAC)
 	macLength = uint(puiMACLength)
 	return mac, macLength, ToError(err1)
+}
+
+func (c *Ctx) SDFHashInit(sessionHandle SessionHandle, uiAlgID uint, pucID []byte, uiIDLength uint) (err error) {
+	var err1 = C.SDF_HashInit(C.SGD_HANDLE(sessionHandle), C.SGD_UINT32(uiAlgID), CMessage(pucID), C.SGD_UINT32(uiIDLength))
+	return ToError(err1)
+}
+
+func (c *Ctx) SDFHashUpdate(sessionHandle SessionHandle, pucData []byte, uiDataLength uint) (err error) {
+	var err1 = C.SDF_HashUpdate(C.SGD_HANDLE(sessionHandle), CMessage(pucData), C.SGD_UINT32(uiDataLength))
+	return ToError(err1)
+}
+
+func (c *Ctx) SDFHashFinal(sessionHandle SessionHandle) (hash []byte, hashLength uint, err error) {
+	var pucHash = make([]C.SGD_UCHAR, 32)
+	var puiHashLength C.SGD_UINT32
+	err1 := C.SDF_HashFinal(C.SGD_HANDLE(sessionHandle), &pucHash[0], &puiHashLength)
+	hash = SgdUCHARArrToByteArr(pucHash)
+	hashLength = uint(puiHashLength)
+	return hash, hashLength, ToError(err1)
 }
