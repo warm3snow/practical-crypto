@@ -428,14 +428,14 @@ func (c *Ctx) SDFHMAC(sessionHandle SessionHandle, hKeyHandle SessionHandle, uiA
 // SDFHashInit 43
 func (c *Ctx) SDFHashInit(sessionHandle SessionHandle, uiAlgID uint, pucID []byte, uiIDLength uint) (publicKey ECCrefPublicKey, err error) {
 	var pucPublicKey C.ECCrefPublicKey
-	var err1 = C.SDFHashInit(c.libHandle, C.SGD_HANDLE(sessionHandle), C.SGD_UINT32(uiAlgID), nil, nil, C.SGD_UINT32(0))
+	var err1 = C.SDF_HashInit(C.SGD_HANDLE(sessionHandle), C.SGD_UINT32(uiAlgID), nil, nil, C.SGD_UINT32(0))
 	publicKey = ConvertToECCrefPublicKeyGo(pucPublicKey)
 	return publicKey, ToError(err1)
 }
 
 // SDFHashUpdate 44
 func (c *Ctx) SDFHashUpdate(sessionHandle SessionHandle, pucData []byte, uiDataLength uint) (err error) {
-	var err1 = C.SDFHashUpdate(c.libHandle, C.SGD_HANDLE(sessionHandle), CMessage(pucData), C.SGD_UINT32(uiDataLength))
+	var err1 = C.SDF_HashUpdate(C.SGD_HANDLE(sessionHandle), CMessage(pucData), C.SGD_UINT32(uiDataLength))
 	return ToError(err1)
 }
 
