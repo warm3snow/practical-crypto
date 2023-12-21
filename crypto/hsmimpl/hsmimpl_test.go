@@ -114,10 +114,10 @@ func TestSM4Parallel(t *testing.T) {
 	for i := 0; i < num; i++ {
 		msg = []byte(strings.Repeat("hello world", i+1))
 		go func() {
-			cipherText, err := csp.Enc("SM4", "1", "12321", msg, "ECB")
+			cipherText, err := csp.Enc("SM4", "1", "12321", msg, "CBC_PKCS5")
 			assert.NoError(t, err)
 
-			plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
+			plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "CBC_PKCS5")
 			assert.NoError(t, err)
 			assert.Equal(t, msg, plainText)
 

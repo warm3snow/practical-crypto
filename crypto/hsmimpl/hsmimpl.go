@@ -17,6 +17,7 @@ type hsmimpl struct {
 	ctx          *base.Ctx
 	deviceHandle base.SessionHandle
 	sessions     chan base.SessionHandle
+	sdfFuncMap   map[string]interface{}
 }
 
 func (h *hsmimpl) GenSymKey(algo string, keySize int) ([]byte, error) {

@@ -11,7 +11,6 @@ package hsmimpl
 import (
 	"github.com/pkg/errors"
 	"github.com/warm3snow/practical-crypto/crypto/hsmimpl/base"
-	"time"
 )
 
 // getSession get hsm session
@@ -21,16 +20,16 @@ func (h *hsmimpl) getSession() (base.SessionHandle, error) {
 	case session = <-h.sessions:
 		return session, nil
 	default:
-		var err error
-		for i := 0; i < 3; i++ {
+		if len(h.sessions) == 0 && len(h.sessions) < sessionCacheSize {
+			var err error
 			session, err = h.ctx.SDFOpenSession(h.deviceHandle)
-			if err == nil {
-				return session, nil
+			if err != nil {
+				return nil, errors.WithMessage(err, "failed to create new session after 3 times attempt")
 			}
-			time.Sleep(time.Millisecond * 100)
+			h.sessions <- session
 		}
-		return nil, errors.WithMessage(err, "failed to create new session after 3 times attempt")
 	}
+	return <-h.sessions, nil
 }
 
 // returnSession return hsm session
