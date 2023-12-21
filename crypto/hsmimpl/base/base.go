@@ -9,7 +9,7 @@ package base
 
 /*
 #cgo windows CFLAGS: -DPACKED_STRUCTURES
-#cgo linux LDFLAGS: -ldl
+#cgo linux LDFLAGS: -ldl -L /usr/local/lib64 -lswsds
 #cgo darwin LDFLAGS: -ldl
 #include <stdlib.h>
 #include <stdio.h>
