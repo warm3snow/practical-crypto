@@ -1,7 +1,7 @@
 package base
 
 func SM3Hash(c *Ctx, s SessionHandle, origin []byte) ([]byte, error) {
-	err := c.SDFHashInit(s, SGD_SM3, nil, 0)
+	_, err := c.SDFHashInit(s, SGD_SM3, nil, 0)
 	if err != nil {
 		return nil, err
 	}
