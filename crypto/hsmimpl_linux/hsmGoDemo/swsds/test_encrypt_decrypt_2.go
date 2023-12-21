@@ -6,7 +6,7 @@ import (
 )
 
 func Test_Encrypt_Decrypt_2() {
-	log.Println("Test_Encrypt_Decrypt")
+	log.Println("Test_Encrypt_Decrypt_2")
 
 	var err error
 	handler, err := SDF_OpenDevice()

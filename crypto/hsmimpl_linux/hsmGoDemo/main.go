@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hsmGoDemo/swsds"
+	"github.com/warm3snow/practical-crypto/crypto/hsmimpl_linux/hsmGoDemo/swsds"
 	"log"
 )
 
