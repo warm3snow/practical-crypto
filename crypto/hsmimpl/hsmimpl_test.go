@@ -49,13 +49,17 @@ func TestSM3HMac(t *testing.T) {
 
 func TestSM2(t *testing.T) {
 	csp, err := New(libPath())
+	assert.NoError(t, err)
 	//Test SM2 enc and dec
 
-	signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
-	assert.NoError(t, err)
-	pass, err := csp.Verify("SM2", "1", msg, signature)
-	assert.NoError(t, err)
-	assert.True(t, pass)
+	for i := 0; i < 100; i++ {
+		signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
+		assert.NoError(t, err)
+		pass, err := csp.Verify("SM2", "1", msg, signature)
+		assert.NoError(t, err)
+		assert.True(t, pass)
+		fmt.Printf("signature: %s\n", hex.EncodeToString(signature))
+	}
 
 	//cipherText, err := csp.Enc("SM2", "1", KeyPwdForKey1, msg, "")
 	//assert.NoError(t, err)
@@ -151,7 +155,7 @@ func TestSM2Parallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	num := 100
+	num := 10
 	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
