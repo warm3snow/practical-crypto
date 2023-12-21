@@ -83,7 +83,7 @@ func SM4Decrypt(c *Ctx, s SessionHandle, keyIndex uint, ciphertext []byte, block
 
 	switch blockMode {
 	case "CBC_PKCS5":
-		// must copy iv, SDFEncrypt of cbc mode will change iv in place
+		// must copy iv, SDFDecrypt of cbc mode will change iv in place
 		iv := ciphertext[:BLOCK_SIZE]
 		iv2 := make([]byte, len(iv))
 		copy(iv2, iv)
@@ -100,7 +100,7 @@ func SM4Decrypt(c *Ctx, s SessionHandle, keyIndex uint, ciphertext []byte, block
 		}
 		return PKCS5UnPadding(out[:outLen])
 	default:
-		return nil, fmt.Errorf("sm4 encryption fails: unknown cipher block mode [%s]", blockMode)
+		return nil, fmt.Errorf("sm4 decryption fails: unknown cipher block mode [%s]", blockMode)
 	}
 }
 

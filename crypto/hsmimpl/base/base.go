@@ -836,7 +836,7 @@ var stubData = []byte{0}
 func CMessage(data []byte) (dataPtr C.SGD_UCHAR_PRT) {
 	l := len(data)
 	if l == 0 {
-		data = stubData
+		return nil
 	}
 	dataPtr = C.SGD_UCHAR_PRT(unsafe.Pointer(&data[0]))
 	return dataPtr
