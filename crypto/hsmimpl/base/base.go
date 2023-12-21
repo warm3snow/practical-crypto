@@ -425,16 +425,21 @@ func (c *Ctx) SDFHMAC(sessionHandle SessionHandle, hKeyHandle SessionHandle, uiA
 	return mac, macLength, ToError(err1)
 }
 
-func (c *Ctx) SDFHashInit(sessionHandle SessionHandle, uiAlgID uint, pucID []byte, uiIDLength uint) (err error) {
-	var err1 = C.SDF_HashInit(C.SGD_HANDLE(sessionHandle), C.SGD_UINT32(uiAlgID), CMessage(pucID), C.SGD_UINT32(uiIDLength))
-	return ToError(err1)
+// SDFHashInit 43
+func (c *Ctx) SDFHashInit(sessionHandle SessionHandle, uiAlgID uint, pucID []byte, uiIDLength uint) (publicKey ECCrefPublicKey, err error) {
+	var pucPublicKey C.ECCrefPublicKey
+	var err1 = C.SDFHashInit(c.libHandle, C.SGD_HANDLE(sessionHandle), C.SGD_UINT32(uiAlgID), nil, nil, C.SGD_UINT32(0))
+	publicKey = ConvertToECCrefPublicKeyGo(pucPublicKey)
+	return publicKey, ToError(err1)
 }
 
+// SDFHashUpdate 44
 func (c *Ctx) SDFHashUpdate(sessionHandle SessionHandle, pucData []byte, uiDataLength uint) (err error) {
-	var err1 = C.SDF_HashUpdate(C.SGD_HANDLE(sessionHandle), CMessage(pucData), C.SGD_UINT32(uiDataLength))
+	var err1 = C.SDFHashUpdate(c.libHandle, C.SGD_HANDLE(sessionHandle), CMessage(pucData), C.SGD_UINT32(uiDataLength))
 	return ToError(err1)
 }
 
+// SDFHashFinal 45
 func (c *Ctx) SDFHashFinal(sessionHandle SessionHandle) (hash []byte, hashLength uint, err error) {
 	var pucHash = make([]C.SGD_UCHAR, 32)
 	var puiHashLength C.SGD_UINT32
