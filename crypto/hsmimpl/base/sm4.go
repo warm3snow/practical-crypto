@@ -26,22 +26,23 @@ func SM4Encrypt(c *Ctx, s SessionHandle, keyIndex uint, origin []byte, blockMode
 		return nil, errors.WithMessagef(err, "failed to get sym keyHandle, keyIndex = %d", keyIndex)
 	}
 	defer func() {
-		err := c.SDFDestroyKey(s, keyHandle)
+		err = c.SDFDestroyKey(s, keyHandle)
 		if err != nil {
 			log.Printf("failed to destroy key, %s\n", err)
 			return
 		}
 	}()
-	iv := make([]byte, BLOCK_SIZE)
-	if _, err := rand.Read(iv); err != nil {
-		return nil, err
-	}
 
 	var cipherWithPad []byte
 	switch blockMode {
 	case "CBC_PKCS5":
 		plainWithPad := PKCS5Padding(origin, BLOCK_SIZE)
 		// must copy iv, SDFEncrypt of cbc mode will change iv in place
+		iv := make([]byte, BLOCK_SIZE)
+		if _, err := rand.Read(iv); err != nil {
+			return nil, err
+		}
+
 		iv2 := make([]byte, len(iv))
 		copy(iv2, iv)
 		out, outLen, err := c.SDFEncrypt(s, keyHandle, SGD_SMS4_CBC, iv2, plainWithPad, uint(len(plainWithPad)))
@@ -49,14 +50,10 @@ func SM4Encrypt(c *Ctx, s SessionHandle, keyIndex uint, origin []byte, blockMode
 			return nil, err
 		}
 		cipherWithPad = append(iv, out[:outLen]...)
-		//fmt.Printf("iv: %x\n", iv)
-		//fmt.Printf("iv2: %x\n", iv2)
 
 	case "ECB":
 		plainWithPad := PKCS5Padding(origin, BLOCK_SIZE)
-		iv2 := make([]byte, len(iv))
-		copy(iv2, iv)
-		out, outLen, err := c.SDFEncrypt(s, keyHandle, SGD_SMS4_ECB, iv, plainWithPad, uint(len(plainWithPad)))
+		out, outLen, err := c.SDFEncrypt(s, keyHandle, SGD_SMS4_ECB, nil, plainWithPad, uint(len(plainWithPad)))
 		if err != nil {
 			return nil, err
 		}

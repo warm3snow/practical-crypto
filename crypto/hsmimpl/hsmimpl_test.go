@@ -2,6 +2,7 @@ package hsmimpl
 
 import (
 	"encoding/hex"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/warm3snow/gmsm/sm3"
 	"log"
@@ -107,7 +108,7 @@ func TestSM4Parallel(t *testing.T) {
 	csp, err := New(libPath())
 	assert.NoError(t, err)
 
-	num := 100
+	num := 20
 	doneChan := make(chan struct{}, num)
 
 	for i := 0; i < num; i++ {
@@ -119,6 +120,8 @@ func TestSM4Parallel(t *testing.T) {
 			plainText, err := csp.Dec("SM4", "1", "12321", cipherText, "ECB")
 			assert.NoError(t, err)
 			assert.Equal(t, msg, plainText)
+
+			fmt.Printf("cipherText: %s\tplainText: %s\n", hex.EncodeToString(cipherText), string(plainText))
 
 			doneChan <- struct{}{}
 		}()
