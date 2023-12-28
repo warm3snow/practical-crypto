@@ -32,7 +32,8 @@ func SM2Sign(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, origin []byte) (sig
 	defer func(c *Ctx, sessionHandle SessionHandle, keyIndex uint) {
 		err := c.SDFReleasePrivateKeyAccessRight(sessionHandle, keyIndex)
 		if err != nil {
-			log.Printf("private key access right has been released: %s", err.Error())
+			//log.Printf("private key access right has been released: %s", err.Error())
+			return
 		}
 	}(c, s, keyIndex+1000)
 
@@ -95,7 +96,8 @@ func SM2Enc(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, plainText []byte) ([
 	defer func(c *Ctx, sessionHandle SessionHandle, keyIndex uint) {
 		err := c.SDFReleasePrivateKeyAccessRight(sessionHandle, keyIndex)
 		if err != nil {
-			log.Printf("private key access right has been released: %s", err.Error())
+			//log.Printf("private key access right has been released: %s", err.Error())
+			return
 		}
 	}(c, s, keyIndex+1000)
 

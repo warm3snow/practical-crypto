@@ -152,7 +152,7 @@ func TestSM4Sequential(t *testing.T) {
 }
 
 func TestSM2Parallel(t *testing.T) {
-	csp, err := New(libPath())
+	csp, err := New("")
 	assert.NoError(t, err)
 
 	num := 100
@@ -172,5 +172,25 @@ func TestSM2Parallel(t *testing.T) {
 	}
 	for i := 0; i < num; i++ {
 		<-doneChan
+	}
+}
+
+func TestSM2NTimes(t *testing.T) {
+	csp, err := New("")
+	assert.NoError(t, err)
+
+	num := 1000
+
+	for i := 0; i < num; i++ {
+		signature, err := csp.Sign("SM2", "1", KeyPwdForKey1, msg)
+		assert.NoError(t, err)
+
+		pass, err := csp.Verify("SM2", "1", msg, signature)
+		assert.NoError(t, err)
+		assert.True(t, pass)
+		if err != nil || !pass {
+			fmt.Printf("signature: %s\n", hex.EncodeToString(signature))
+			fmt.Printf("err: %s\n", err.Error())
+		}
 	}
 }
