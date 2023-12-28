@@ -10,6 +10,7 @@ package base
 
 import (
 	"encoding/asn1"
+	"github.com/pkg/errors"
 	"github.com/warm3snow/gmsm/sm2"
 	"github.com/warm3snow/gmsm/sm3"
 	"log"
@@ -47,15 +48,26 @@ func SM2Sign(c *Ctx, s SessionHandle, keyIndex uint, keyPwd, origin []byte) (sig
 		return nil, err
 	}
 
-	signature, err := c.SDFInternalSign_ECC(s, keyIndex, originHash, uint(len(originHash)))
-	if err != nil {
-		return nil, err
+	for i := 0; i < 10; i++ {
+		signature, err := c.SDFInternalSign_ECC(s, keyIndex, originHash, uint(len(originHash)))
+		if err != nil {
+			return nil, err
+		}
+
+		eccR := big.NewInt(0).SetBytes([]byte(signature.R))
+		eccS := big.NewInt(0).SetBytes([]byte(signature.S))
+
+		// FIXME: check if sign is valid, regularly we don't do this, but go asn1 is strict!
+		if sm2.Sm2Verify(pub, origin, []byte(CRYPTO_DEFAULT_UID), eccR, eccS) {
+			sign, err = asn1.Marshal(eccSignature{eccR, eccS})
+			if err != nil {
+				return nil, err
+			}
+			return sign, nil
+		}
+		continue
 	}
-
-	eccR := big.NewInt(0).SetBytes([]byte(signature.R))
-	eccS := big.NewInt(0).SetBytes([]byte(signature.S))
-
-	return asn1.Marshal(eccSignature{eccR, eccS})
+	return nil, errors.New("sign failed")
 }
 
 func SM2Verify(c *Ctx, s SessionHandle, keyIndex uint, origin, sign []byte) (bool, error) {
