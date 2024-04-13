@@ -11,11 +11,11 @@ package pre
 import (
 	"bytes"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/warm3snow/gmsm/sm2"
+	"github.com/warm3snow/gmsm/sm3"
 	"math/big"
 )
 
@@ -54,7 +54,7 @@ func Encrypt(r *big.Int, pk *sm2.PublicKey, m []byte) ([]byte, error) {
 	// calculate C1
 	c.C1.X, c.C1.Y = sm2.P256Sm2().ScalarBaseMult(r.Bytes())
 	xa, ya := sm2.P256Sm2().ScalarMult(pk.X, pk.Y, r.Bytes())
-	t := sha256.Sum256(append(xa.Bytes(), ya.Bytes()...))
+	t := sm3.Sm3Sum(append(xa.Bytes(), ya.Bytes()...))
 
 	// calculate C2
 	c.C2 = make([]byte, len(m))
@@ -63,12 +63,12 @@ func Encrypt(r *big.Int, pk *sm2.PublicKey, m []byte) ([]byte, error) {
 	}
 
 	// calculate C3
-	c3Bytes := sha256.Sum256(append(append(xa.Bytes(), m...), ya.Bytes()...))
+	c3Bytes := sm3.Sm3Sum(append(append(xa.Bytes(), m...), ya.Bytes()...))
 	c.C3 = c3Bytes[:]
 
 	// calculate C4
 	c1Bytes := append(c.C1.X.Bytes(), c.C1.Y.Bytes()...)
-	c4Bytes := sha256.Sum256(append(append(m, c1Bytes...), c.C3...))
+	c4Bytes := sm3.Sm3Sum(append(append(m, c1Bytes...), c.C3...))
 	c.C4 = c4Bytes[:]
 
 	return json.Marshal(c)
@@ -77,11 +77,11 @@ func Encrypt(r *big.Int, pk *sm2.PublicKey, m []byte) ([]byte, error) {
 func ReGenKey(r *big.Int, pkA, pkB *sm2.PublicKey, alpha []byte) *big.Int {
 	// calculate t
 	xa, ya := sm2.P256Sm2().ScalarMult(pkA.X, pkA.Y, r.Bytes())
-	t := sha256.Sum256(append(xa.Bytes(), ya.Bytes()...))
+	t := sm3.Sm3Sum(append(xa.Bytes(), ya.Bytes()...))
 
 	// calculate rk_{A->B}
 	xb, yb := sm2.P256Sm2().ScalarMult(pkB.X, pkB.Y, r.Bytes())
-	s := sha256.Sum256(append(append(xb.Bytes(), yb.Bytes()...), alpha...))
+	s := sm3.Sm3Sum(append(append(xb.Bytes(), yb.Bytes()...), alpha...))
 
 	// xor t and s
 	rXorS := make([]byte, len(t))
@@ -119,7 +119,7 @@ func Decrypt(cipher []byte, skB *sm2.PrivateKey, alpha []byte) ([]byte, error) {
 
 	// calculate M1
 	xb, yb := sm2.P256Sm2().ScalarMult(c.C1.X, c.C1.Y, skB.D.Bytes())
-	s := sha256.Sum256(append(append(xb.Bytes(), yb.Bytes()...), alpha...))
+	s := sm3.Sm3Sum(append(append(xb.Bytes(), yb.Bytes()...), alpha...))
 	m1 := make([]byte, len(c.C2))
 	for i := 0; i < len(c.C2); i++ {
 		m1[i] = c.C2[i] ^ s[i]
@@ -127,7 +127,7 @@ func Decrypt(cipher []byte, skB *sm2.PrivateKey, alpha []byte) ([]byte, error) {
 
 	// calculate k
 	c1Bytes := append(c.C1.X.Bytes(), c.C1.Y.Bytes()...)
-	kBytes := sha256.Sum256(append(append(m1, c1Bytes...), c.C3...))
+	kBytes := sm3.Sm3Sum(append(append(m1, c1Bytes...), c.C3...))
 	k := kBytes[:]
 
 	if bytes.Equal(k, c.C4) {
