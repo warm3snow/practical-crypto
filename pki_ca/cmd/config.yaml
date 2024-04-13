@@ -1,0 +1,46 @@
+common:
+  # 服务编号
+  server_no: S20240402
+  # 服务服务监听端口
+  port: 40402
+  
+  # tls配置
+  tls:
+    # 是否启用TLS
+    enable: true
+    # TLS证书路径
+    crt_path: ./certs/tls.crt
+    # TLS私钥路径
+    key_path: ./certs/tls.key
+    # TLS CA证书路径
+    ca_path: ./certs/ca.crt
+    # TLS双向验证
+    mutual: false
+
+# 日志配置
+log:
+  # 日志级别
+  level: debug
+  # 日志文件路径
+  file_path: ./server.log
+
+# 密码库配置
+crypto:
+  # 是否启用密码机, 默认为true不启用
+  soft: true
+  # 若启用密码机, 则配置密码机的lib路径
+  lib_path: ""
+
+# 服务数据库配置
+db:
+  # 数据库类型，目前支持sqlite3、mysql
+  type: "sqlite3"
+  # 数据库路径，sqlite3为文件路径；mysql为连接字符串,如：%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local
+  url: ./server.db
+
+# 任务配置
+task:
+  # 任务并发处理数量
+  max_speed: 20
+  # 任务处理超时时间
+  timeout: 600
