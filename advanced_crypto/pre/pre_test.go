@@ -10,6 +10,7 @@ package pre
 
 import (
 	"crypto/rand"
+	"encoding/hex"
 	"github.com/stretchr/testify/assert"
 	"math/big"
 	"testing"
@@ -18,6 +19,10 @@ import (
 func TestPre(t *testing.T) {
 	msg := "hello PRE!"
 	alpha := []byte("1234567890")
+
+	t.Log("Test PRE")
+	t.Log("待共享数据明文 M:", msg)
+	t.Log("Alice的自定时授权参数 alpha:", string(alpha))
 
 	// 1. KeyGen
 	_, pkA, err := KeyGen()
@@ -32,6 +37,8 @@ func TestPre(t *testing.T) {
 	c, err := Encrypt(r, pkA, []byte(msg))
 	assert.NoError(t, err)
 
+	t.Log("Alice加密数据 C:", hex.EncodeToString(c))
+
 	// 3. ReGenKey
 	skB, pkB, err := KeyGen()
 	assert.NoError(t, err)
@@ -42,8 +49,19 @@ func TestPre(t *testing.T) {
 	cipher, err := ReEncrypt(c, rkAB)
 	assert.NoError(t, err)
 
+	t.Log("Proxy重加密数据 C':", hex.EncodeToString(cipher))
+
+	assert.NotEqual(t, c, cipher)
+	for i := 0; i < len(c); i++ {
+		if c[i] != cipher[i] {
+			t.Log("C[i] != C'[i], i:", i)
+		}
+	}
+
 	// 5. Decrypt
 	plain, err := Decrypt(cipher, skB, alpha)
 	assert.NoError(t, err)
 	assert.Equal(t, msg, string(plain))
+
+	t.Log("Bob解密数据 M:", string(plain))
 }

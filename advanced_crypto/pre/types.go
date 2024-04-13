@@ -11,15 +11,15 @@ package pre
 import "math/big"
 
 type C struct {
+	C2 []byte `json:"C2"`
 	C1 struct {
 		X *big.Int `json:"X"`
 		Y *big.Int `json:"Y"`
 	}
-	C2 []byte `json:"C2"`
 	C3 []byte `json:"C3"`
 	C4 []byte `json:"C4"`
 }
 
 const (
-	C1C2C3C4 = 1
+	C2C1C3C4 = 1
 )

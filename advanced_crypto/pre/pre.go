@@ -102,7 +102,7 @@ func ReEncrypt(cipher []byte, skAB *big.Int) ([]byte, error) {
 	// re-calculate C2
 	newC2 := make([]byte, len(c.C2))
 	for i := 0; i < len(c.C2); i++ {
-		newC2[i] = c.C2[i] ^ skAB.Bytes()[i]
+		newC2[i] = skAB.Bytes()[i] ^ c.C2[i]
 	}
 	c.C2 = newC2
 
