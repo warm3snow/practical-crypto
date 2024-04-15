@@ -8,18 +8,17 @@
 
 package pre
 
-import "math/big"
+import (
+	"github.com/warm3snow/gmsm/sm2"
+	"math/big"
+)
 
-type C struct {
-	C2 []byte `json:"C2"`
-	C1 struct {
-		X *big.Int `json:"X"`
-		Y *big.Int `json:"Y"`
-	}
-	C3 []byte `json:"C3"`
-	C4 []byte `json:"C4"`
+type Capsule struct {
+	E sm2.PublicKey
+	V sm2.PublicKey
+	S *big.Int
 }
 
 const (
-	C2C1C3C4 = 1
+	C1C2 = 1
 )

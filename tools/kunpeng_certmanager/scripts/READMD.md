@@ -48,10 +48,10 @@ gpd.ta.sys_verify_ta:   true
 $ openssl genrsa -out private_key.pem 4096
 
 # 生成certmanager TA证书请求
-$ openssl req -new -key private_key.pem -out cert_req_01.csr -subj "/C=CN/O=Huawei/OU=Huawei iTrustee Production/CN=d354a48a-e6b1-4651-b7b5-c79c28f13870_certmanager"
+$ openssl req -new -key private_key.pem -out cert_req_01.csr -subj "/Capsule=CN/O=Huawei/OU=Huawei iTrustee Production/CN=d354a48a-e6b1-4651-b7b5-c79c28f13870_certmanager"
 
 # 自签证书
-openssl req -new -x509 -key private_key.pem -out root.crt -subj "/C=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
+openssl req -new -x509 -key private_key.pem -out root.crt -subj "/Capsule=CN/L=F/O=testRootCA/OU=ACS/CN=Root CA" -days 3650
 ```
 注：private_key.pem，root.crt, manifest.txt 需要妥善保管
 
