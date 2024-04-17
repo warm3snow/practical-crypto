@@ -100,8 +100,8 @@ func ReGenKey(skA *sm2.PrivateKey, pkB *sm2.PublicKey) (*big.Int, []byte) {
 	dInv := new(big.Int).Set(d)
 	dInv.ModInverse(dInv, skA.Curve.Params().N)
 
-	fmt.Printf("ReGenKey d: %s\n", d.String())
-	fmt.Printf("ReGenKey dInv: %s\n", dInv.String())
+	//fmt.Printf("ReGenKey d: %s\n", d.String())
+	//fmt.Printf("ReGenKey dInv: %s\n", dInv.String())
 
 	// 计算rk
 	rk := new(big.Int).Set(skA.D)
@@ -148,7 +148,7 @@ func Decrypt(capsule []byte, skB *sm2.PrivateKey, pkA *sm2.PublicKey, cipherText
 	abDHBytes := append(abDHx.Bytes(), abDHy.Bytes()...)
 
 	d := HashToCurve(append(random, append(pkBBytes, abDHBytes...)...))
-	fmt.Printf("Decrypt d: %s\n", d.String())
+	//fmt.Printf("Decrypt d: %s\n", d.String())
 
 	evAddx, evAddy := Curve.Add(c.E.X, c.E.Y, c.V.X, c.V.Y)
 	x, y := Curve.ScalarMult(evAddx, evAddy, d.Bytes())
