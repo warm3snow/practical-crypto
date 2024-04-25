@@ -6,7 +6,7 @@
  * @Date: 2023/8/16 18:27
  */
 
-package config
+package crypto
 
 // Conf -
 var Conf *Config
