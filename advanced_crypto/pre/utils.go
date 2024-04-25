@@ -8,7 +8,6 @@
 
 package pre
 
-import "C"
 import (
 	"crypto/elliptic"
 	"github.com/warm3snow/gmsm/sm2"
