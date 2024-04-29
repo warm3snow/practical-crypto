@@ -28,9 +28,10 @@ var (
 )
 
 func TestInitCryptoForHsmimpl(t *testing.T) {
-	soft := false
-	libPath := "./hsmimpl/lib/libswsds.dylib"
-	csp, err := InitCrypto(soft, libPath)
+	csp, err := InitCrypto(&CryptoConfig{
+		Soft:    false,
+		LibPath: "./hsmimpl/lib/libswsds.dylib",
+	})
 	assert.NoError(t, err)
 	assert.NotNil(t, csp)
 
@@ -64,8 +65,9 @@ func TestInitCryptoForHsmimpl(t *testing.T) {
 }
 
 func TestInitCryptoForSoftimpl(t *testing.T) {
-	soft := true
-	csp, err := InitCrypto(soft, "")
+	csp, err := InitCrypto(&CryptoConfig{
+		Soft: true,
+	})
 	assert.NoError(t, err)
 	assert.NotNil(t, csp)
 
