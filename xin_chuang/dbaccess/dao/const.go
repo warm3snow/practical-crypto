@@ -10,8 +10,12 @@ const (
 	DBTypeKingBasePgsql = "kingbase_pgsql"
 	// DBTypePostgres postgres数据库
 	DBTypePostgres = "postgres"
-	// DBTypeSqlite sqlite3数据库
-	DBTypeSqlite = "sqlite3"
+	// DBTypeSqlite3 sqlite3数据库
+	DBTypeSqlite3 = "sqlite3"
 	// DBTypeMemory memory数据库
 	DBTypeMemory = "memory"
+	// DBTypeDM8 dm8数据库
+	DBTypeDM8 = "dm8"
+	// DBTypeOracle oracle数据库
+	DBTypeOracle = "oracle"
 )

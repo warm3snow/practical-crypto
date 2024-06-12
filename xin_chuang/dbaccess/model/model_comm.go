@@ -19,13 +19,3 @@ type CommonFooter struct {
 	UpdatedAt time.Time  `json:"-" sql:"index"    gorm:"column:modify_time;    comment:'修改时间'"`
 	DeletedAt *time.Time `json:"-" sql:"index"    gorm:"column:delete_time;    comment:'删除时间'"`
 }
-
-type ChainInfo struct {
-	// ChainInfoId is from chain_service, don't generate automatically
-	ChainInfoId int    `json:"-" gorm:"column:chain_info_id; type: int; comment:'链信息ID'"`
-	ChainName   string `json:"-" gorm:"column:chain_name; type:varchar(256); comment:'链名称'"`
-}
-
-type TxInfo struct {
-	TxId string `json:"TxId" gorm:"column:tx_id; type:varchar(128); comment:'交易ID'"`
-}

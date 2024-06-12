@@ -3,9 +3,11 @@ package dao
 import (
 	"database/sql"
 
+	oracle "github.com/godoes/gorm-oracle"
 	"github.com/warm3snow/practical-crypto/xin_chuang/config"
 	"github.com/warm3snow/practical-crypto/xin_chuang/dbaccess/model"
 
+	dm "github.com/nfjBill/gorm-driver-dm"
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -26,7 +28,7 @@ func New(cfg *config.DBConfig) (*DAO, error) {
 		err error
 	)
 	switch cfg.Type {
-	case DBTypeSqlite:
+	case DBTypeSqlite3:
 		db, err = gorm.Open(sqlite.Open(cfg.URL), &gorm.Config{})
 	case DBTypeMysql, DBTypeKingBaseMysql:
 		db, err = gorm.Open(mysql.Open(cfg.URL), &gorm.Config{})
@@ -34,6 +36,12 @@ func New(cfg *config.DBConfig) (*DAO, error) {
 		db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	case DBTypePostgres, DBTypeKingBasePgsql:
 		db, err = gorm.Open(postgres.Open(cfg.URL), &gorm.Config{})
+	case DBTypeDM8:
+		db, err = gorm.Open(dm.Open(cfg.URL), &gorm.Config{})
+	case DBTypeOracle:
+		// note: oracle dsn should be build outside, like this:
+		//url := oracle.BuildUrl(addr, int(port), service, userName, userPwd, nil)
+		db, err = gorm.Open(oracle.Open(cfg.URL), &gorm.Config{})
 	default:
 		return nil, errors.Errorf("db type not support, dbType = %s", cfg.Type)
 	}
@@ -42,7 +50,7 @@ func New(cfg *config.DBConfig) (*DAO, error) {
 	}
 
 	// 自动建表
-	err = db.AutoMigrate(&model.RedisSubscribe{})
+	err = db.AutoMigrate(&model.User{})
 	if err != nil {
 		return nil, err
 	}

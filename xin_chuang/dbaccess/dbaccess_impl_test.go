@@ -9,8 +9,12 @@
 package dbaccess
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"testing"
+
+	oracle "github.com/godoes/gorm-oracle"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/warm3snow/practical-crypto/xin_chuang/config"
@@ -18,43 +22,112 @@ import (
 	"github.com/warm3snow/practical-crypto/xin_chuang/dbaccess/types"
 )
 
-func TestMain(m *testing.M) {
-	mysqldsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		"root", "123456", "localhost", 3306, "mira_testdb")
-	cfg := config.DBConfig{
+func initMysqlDBAccessService(t *testing.T) {
+	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"root", "123456", "localhost", 3306, "testdb")
+	err := InitDBAccessService(&config.DBConfig{
 		Type: dao.DBTypeMysql,
-		URL:  mysqldsn,
-	}
-
-	if err := InitDBAccessService(&cfg); err != nil {
-		panic(err)
-	}
-	m.Run()
+		URL:  url,
+	})
+	assert.NoError(t, err)
 }
 
-func TestRedisSubscribe(t *testing.T) {
-	// test add
-	err := DBAccessService.AddRedisSubscribe(&types.RedisSubscribe{
-		StreamName:   "mystream",
-		GroupName:    "mygroup",
-		ConsumerName: "myconsumer",
-		MessageId:    "0",
+func initSqlite3DBAccessService(t *testing.T) {
+	err := InitDBAccessService(&config.DBConfig{
+		Type: dao.DBTypeSqlite3,
+		URL:  "./testdb.db",
+	})
+	assert.NoError(t, err)
+}
+
+func initKingbaseDBAccessService(t *testing.T) {
+	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"root", "123456", "localhost", 54321, "testdb")
+	err := InitDBAccessService(&config.DBConfig{
+		Type: dao.DBTypeKingBaseMysql,
+		URL:  url,
+	})
+	assert.NoError(t, err)
+}
+
+func initDM8DBAccessService(t *testing.T) {
+	url := fmt.Sprintf("dm://%s:%s@%s:%d/%s?autoCommit=true&charset=UTF-8",
+		"root", "123456", "localhost", 5236, "testdb")
+	err := InitDBAccessService(&config.DBConfig{
+		Type: dao.DBTypeDM8,
+		URL:  url,
+	})
+	assert.NoError(t, err)
+}
+
+func initOracleDBAccessService(t *testing.T) {
+	url := oracle.BuildUrl("localhost", 1521, "testdb",
+		"SYSTEM", "123456", nil)
+	err := InitDBAccessService(&config.DBConfig{
+		Type: dao.DBTypeOracle,
+		URL:  url,
 	})
 	assert.NoError(t, err)
 
+}
+
+func testUserInterface(t *testing.T) {
+	userInfo1 := &types.UserInfo{
+		UserName: "test",
+		Password: hex.EncodeToString(md5.New().Sum([]byte("123456"))),
+		Email:    "test@email.com",
+		Phone:    "12345678901",
+		Role:     0,
+	}
+	// test add
+	err := DBAccessService.AddUser(userInfo1)
+	assert.NoError(t, err)
+
 	// test get
-	redisSubscribeList, err := DBAccessService.GetRedisSubscribeList(nil)
+	userInfo2, err := DBAccessService.GetUserInfo("test")
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(redisSubscribeList))
-	assert.Equal(t, 0, redisSubscribeList[0].MessageStatus)
+	assert.NotNil(t, userInfo2)
+	assert.Equal(t, userInfo1.UserName, userInfo2.UserName)
 
-	// update message status
-	err = DBAccessService.UpdateRedisSubscribeStatusByMessageId("0", 1)
+	// test update
+	err = DBAccessService.UpdateUser(&types.UserInfo{
+		UserName: "test",
+		Email:    "test1@email.com",
+	})
 	assert.NoError(t, err)
-	redisSubscribe, err := DBAccessService.GetRedisSubscribeByMessageId("0")
+	userInfo3, err := DBAccessService.GetUserInfo("test")
 	assert.NoError(t, err)
-	assert.Equal(t, 1, redisSubscribe.MessageStatus)
+	assert.Equal(t, "test1@email.com", userInfo3.Email)
 
-	err = DBAccessService.DeleteRedisSubscribe(redisSubscribeList[0].MessageId)
+	// test delete
+	err = DBAccessService.DeleteUser("test")
 	assert.NoError(t, err)
+	userInfo4, err := DBAccessService.GetUserInfo("test")
+	assert.Error(t, err)
+	assert.Nil(t, userInfo4)
+}
+
+func TestMysqlDBAccessService(t *testing.T) {
+	initMysqlDBAccessService(t)
+	testUserInterface(t)
+}
+
+func TestSqlite3DBAccessService(t *testing.T) {
+	initSqlite3DBAccessService(t)
+	testUserInterface(t)
+}
+
+func TestKingbaseDBAccessService(t *testing.T) {
+	initKingbaseDBAccessService(t)
+	testUserInterface(t)
+}
+
+func TestDM8DBAccessService(t *testing.T) {
+	initDM8DBAccessService(t)
+	testUserInterface(t)
+}
+
+func TestOracleDBAccessService(t *testing.T) {
+	initOracleDBAccessService(t)
+	testUserInterface(t)
 }

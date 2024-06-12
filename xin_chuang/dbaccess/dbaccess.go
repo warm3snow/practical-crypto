@@ -21,29 +21,16 @@ var (
 
 // DBAccessInterface -
 type DBAccessInterface interface {
-	// AddRedisSubscribe adds redis subscribe.
-	AddRedisSubscribe(redisSubscribe *types.RedisSubscribe) error
-
-	// DeleteRedisSubscribe deletes redis subscribe of specified RedisSubscribeNo.
-	DeleteRedisSubscribe(messageId string) error
-
-	// UpdateRedisSubscribe updates redis subscribe.
-	UpdateRedisSubscribe(redisSubscribe *types.RedisSubscribe) error
-
-	// GetRedisSubscribe gets redis subscribe of specified RedisSubscribeNo.
-	GetRedisSubscribe(id int) (*types.RedisSubscribe, error)
-
-	// GetRedisSubscribeList gets redis subscribe list by status.
-	GetRedisSubscribeList(status []int) ([]*types.RedisSubscribe, error)
-
-	// UpdateRedisSubscribeStatus updates redis subscribe status.
-	UpdateRedisSubscribeStatus(id int, status int) error
-
-	// GetRedisSubscribeByMessageId gets redis subscribe of specified messageId.
-	GetRedisSubscribeByMessageId(messageId string) (*types.RedisSubscribe, error)
-
-	// UpdateRedisSubscribeStatusByMessageId updates redis subscribe of specified messageId.
-	UpdateRedisSubscribeStatusByMessageId(messageId string, status int) error
+	// GetUserInfo - get user info by user name
+	GetUserInfo(userName string) (userInfo *types.UserInfo, err error)
+	// AddUser - add user
+	AddUser(user *types.UserInfo) (err error)
+	// DeleteUser - delete user
+	DeleteUser(userName string) (err error)
+	// UpdateUser - update user
+	UpdateUser(user *types.UserInfo) (err error)
+	// GetUsers - get all users
+	GetUsers() (users []*types.UserInfo, err error)
 }
 
 // InitDBAccessService returns a new database instance.
